@@ -17,7 +17,7 @@
 Essential F# is targeted at folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming. Some programming experience, particularly in C# or VB.</description>
       <content>&lt;p&gt;Essential F# is a practical book aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#.  It will help you to discover why F# is such a popular language with those who have spent time learning its secrets.&lt;/p&gt;
 &lt;p&gt;Essential F# is targeted at folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming. Some programming experience, particularly in C# or VB.NET, may be useful but not absolutely necessary.&lt;/p&gt;
-&lt;p&gt;You can download Essential F# for free from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can download Essential F# for free from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt; as a .pdf, .epub, or .mobi.&lt;/p&gt;
 &lt;p&gt;The source markdown files are available at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;https://github.com/ijrussell/essential-fsharp&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This book is FREE. If someone feels that they want to pay money for it, the author&amp;rsquo;s royalties (80% on LeanPub) will continue to go to the F# Software Foundation.&lt;/p&gt;
 </content>
@@ -29,21 +29,21 @@ Essential F# is targeted at folks wanting to learn F# and assumes that the reade
       <pubDate>Sat, 30 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://ijrussell.github.io/posts/top-10-books/</guid>
-      <description>In this post, I will list my all-time favourite software development books.
-My 10 favourite development books (in alphabetical order): Designing Data-Intensive Applications by Martin Kleppmann Domain-Driven Design by Eric Evans Domain Modelling Made Functional by Scott Wlaschin Extreme Programming Explained by Kent Beck Grokking Simplicity by Eric Normand Growing Object Oriented Software, Guided by Tests by Steve Freeman and Nat Pryce Modern Software Engineering by Dave Farley Monolith to Microservices by Sam Newman Software Craftsmanship by Sandro Mancuso Understanding the 4 Rules of Simple Design by Corey Haines </description>
-      <content>&lt;p&gt;In this post, I will list my all-time favourite software development books.&lt;/p&gt;
-&lt;h2 id=&#34;my-10-favourite-development-books-in-alphabetical-order&#34;&gt;My 10 favourite development books (in alphabetical order):&lt;/h2&gt;
+      <description>I have read hundreds of books over the years and some of them have had a profound effect on me. In this post, I will list my all-time favourite software development books. As you can imagine this has proven to be a very difficult task; I could easily have doubled the size of the list but keeping it small forces me to make decisions.
+So, here it is - My 10 favourite development books (in alphabetical order):</description>
+      <content>&lt;p&gt;I have read hundreds of books over the years and some of them have had a profound effect on me. In this post, I will list my all-time favourite software development books. As you can imagine this has proven to be a very difficult task; I could easily have doubled the size of the list but keeping it small forces me to make decisions.&lt;/p&gt;
+&lt;p&gt;So, here it is - My 10 favourite development books (in alphabetical order):&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Designing Data-Intensive Applications by Martin Kleppmann&lt;/li&gt;
-&lt;li&gt;Domain-Driven Design by Eric Evans&lt;/li&gt;
-&lt;li&gt;Domain Modelling Made Functional by Scott Wlaschin&lt;/li&gt;
-&lt;li&gt;Extreme Programming Explained by Kent Beck&lt;/li&gt;
-&lt;li&gt;Grokking Simplicity by Eric Normand&lt;/li&gt;
-&lt;li&gt;Growing Object Oriented Software, Guided by Tests by Steve Freeman and Nat Pryce&lt;/li&gt;
-&lt;li&gt;Modern Software Engineering by Dave Farley&lt;/li&gt;
-&lt;li&gt;Monolith to Microservices by Sam Newman&lt;/li&gt;
-&lt;li&gt;Software Craftsmanship by Sandro Mancuso&lt;/li&gt;
-&lt;li&gt;Understanding the 4 Rules of Simple Design by Corey Haines&lt;/li&gt;
+&lt;li&gt;Designing Data-Intensive Applications by &lt;em&gt;Martin Kleppmann&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Domain-Driven Design by &lt;em&gt;Eric Evans&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Domain Modelling Made Functional by &lt;em&gt;Scott Wlaschin&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Extreme Programming Explained by &lt;em&gt;Kent Beck&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Grokking Simplicity by &lt;em&gt;Eric Normand&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Growing Object Oriented Software, Guided by Tests by &lt;em&gt;Steve Freeman&lt;/em&gt; and &lt;em&gt;Nat Pryce&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Modern Software Engineering by &lt;em&gt;Dave Farley&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Monolith to Microservices by &lt;em&gt;Sam Newman&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Software Craftsmanship by &lt;em&gt;Sandro Mancuso&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Understanding the 4 Rules of Simple Design by &lt;em&gt;Corey Haines&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </content>
     </item>
