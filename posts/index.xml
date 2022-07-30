@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on ijrussell</title>
-    <link>http://ijrussell.github.io/posts/</link>
+    <link>https://ijrussell.github.io/posts/</link>
     <description>Recent content in Posts on ijrussell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Sat, 30 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://ijrussell.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 30 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Essential F# ebook</title>
-      <link>http://ijrussell.github.io/posts/essential-fsharp/</link>
+      <link>https://ijrussell.github.io/posts/essential-fsharp/</link>
       <pubDate>Sat, 30 Jul 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://ijrussell.github.io/posts/essential-fsharp/</guid>
+      <guid>https://ijrussell.github.io/posts/essential-fsharp/</guid>
       <description>Essential F# is a practical book aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#. It will help you to discover why F# is such a popular language with those who have spent time learning its secrets.
 Essential F# is targeted at folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming. Some programming experience, particularly in C# or VB.</description>
       <content>&lt;p&gt;Essential F# is a practical book aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#.  It will help you to discover why F# is such a popular language with those who have spent time learning its secrets.&lt;/p&gt;
@@ -25,10 +25,10 @@ Essential F# is targeted at folks wanting to learn F# and assumes that the reade
     
     <item>
       <title>My Favourite Development Books</title>
-      <link>http://ijrussell.github.io/posts/top-10-books/</link>
+      <link>https://ijrussell.github.io/posts/top-10-books/</link>
       <pubDate>Sat, 30 Jul 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://ijrussell.github.io/posts/top-10-books/</guid>
+      <guid>https://ijrussell.github.io/posts/top-10-books/</guid>
       <description>In this post, I will list my all-time favourite software development books.
 My 10 favourite development books (in alphabetical order): Designing Data-Intensive Applications by Martin Kleppmann Domain-Driven Design by Eric Evans Domain Modelling Made Functional by Scott Wlaschin Extreme Programming Explained by Kent Beck Grokking Simplicity by Eric Normand Growing Object Oriented Software, Guided by Tests by Steve Freeman and Nat Pryce Modern Software Engineering by Dave Farley Monolith to Microservices by Sam Newman Software Craftsmanship by Sandro Mancuso Understanding the 4 Rules of Simple Design by Corey Haines </description>
       <content>&lt;p&gt;In this post, I will list my all-time favourite software development books.&lt;/p&gt;
