@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>A More Efficient Solution of the Shortest Route Kata :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This post describes how I improved the efficiency of my submission to the Trustbit Transport Tycoon 2 Episode 2.1 problem. The initial solution used an exhaustive approach; this post outline an alternate approach that is potentially much more efficient." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/improve-transport-tycoon/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="A More Efficient Solution of the Shortest Route Kata">
+<meta property="og:description" content="This post describes how I improved the efficiency of my submission to the Trustbit Transport Tycoon 2 Episode 2.1 problem. The initial solution used an exhaustive approach; this post outline an alternate approach that is potentially much more efficient." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/improve-transport-tycoon/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-07-31 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/improve-transport-tycoon/">A More Efficient Solution of the Shortest Route Kata</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-07-31
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>This post describes how I improved on my submission to the Trustbit Transport Tycoon 2 Episode 2.1 problem. The blog post showing how I arrived at the original solution can be found at <a href="https://trustbit.tech/blog/2022/4/26/solving-transport-tycoon-2-episode-21-with-f">https://trustbit.tech/blog/2022/4/26/solving-transport-tycoon-2-episode-21-with-f</a>.</p>
+<p>The task is to find the shortest route between two stations given a dataset of connections. See <a href="https://github.com/trustbit/exercises/blob/master/transport-tycoon_21.md">https://github.com/trustbit/exercises/blob/master/transport-tycoon_21.md</a> for more details about the problem.</p>
+<p>This category of exercise lends itself to using recursion. If you want to see alternate approaches in F# and some other languages (C#, python, and Swift), have a look at <a href="https://github.com/trustbit/exercises/blob/master/transport-tycoon/README.md">https://github.com/trustbit/exercises/blob/master/transport-tycoon/README.md</a>.</p>
+<h2 id="getting-started">Getting Started<a href="#getting-started" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>In the initial solution, I chose to tackle this problem with the following steps:</p>
+<ol>
+<li>Load the data from the file</li>
+<li>Determine all possible routes that we could choose from the start location to the finish location using the file data</li>
+<li>Calculate the shortest route</li>
+<li>Print the result</li>
+</ol>
+<p>There is a video recording of me working through this task for a brown bag session but it hasn&rsquo;t been released yet.</p>
+<p>After the brown bag, I ended up with the following solution which uses a hierarchical discriminated union, which I named <code>Tree&lt;'T&gt;</code>, to determine the routes and store the route data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> System.IO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Tree</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Branch <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">&#39;</span>T <span style="color:#f92672">*</span> Tree<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> seq
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Leaf <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">&#39;</span>T
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Waypoint</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Location<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Route<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span>    TotalDistance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Connection</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Start<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Finish<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Distance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> loadConnections path <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    path
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> File.ReadAllLines
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Array.skip 1
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> rows <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> row <span style="color:#66d9ef">in</span> rows <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">match</span> row<span style="color:#f92672">.</span>Split<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">[|</span>start<span style="color:#f92672">;</span>finish<span style="color:#f92672">;</span>distance<span style="color:#f92672">|]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;{row} is invalid&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.groupBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> cn<span style="color:#f92672">.</span>Start<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Map.ofList
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> rec getLeaves tree <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> tree <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Leaf wp <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">[</span>wp<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Branch <span style="color:#f92672">(_,</span>xs<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> xs <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> List.collect getLeaves
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> findPossibleRoutes start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec processWaypoint waypoint <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> unvisited <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            connections<span style="color:#f92672">[</span>waypoint<span style="color:#f92672">.</span>Location<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> waypoint<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.exists <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> loc <span style="color:#f92672">-&gt;</span> loc <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">not</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                Location <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish
+</span></span><span style="display:flex;"><span>                Route <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Start <span style="color:#f92672">::</span> waypoint<span style="color:#f92672">.</span>Route
+</span></span><span style="display:flex;"><span>                TotalDistance <span style="color:#f92672">=</span> waypoint<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">+</span> cn<span style="color:#f92672">.</span>Distance
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> waypoint<span style="color:#f92672">.</span>Location <span style="color:#f92672">=</span> finish <span style="color:#f92672">||</span> unvisited <span style="color:#f92672">=</span> [] <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>            Leaf waypoint
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>            Branch <span style="color:#f92672">(</span>waypoint<span style="color:#f92672">,</span> seq <span style="color:#f92672">{</span> <span style="color:#66d9ef">for</span> next <span style="color:#66d9ef">in</span> unvisited <span style="color:#66d9ef">do</span> processWaypoint next <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>    processWaypoint <span style="color:#f92672">{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> getLeaves
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">=</span> finish<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getShortestRoute start finish <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Path.Combine<span style="color:#f92672">(__</span>SOURCE_DIRECTORY__<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;data.csv&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> loadConnections <span style="color:#75715e">// load connections
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> findPossibleRoutes start finish <span style="color:#75715e">// find possible routes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> List.minBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span> <span style="color:#75715e">// determine shortest
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">::</span> wp<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.rev<span style="color:#f92672">,</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#75715e">// display result
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>getShortestRoute <span style="color:#e6db74">&#34;Cogburg&#34;</span> <span style="color:#e6db74">&#34;Leverstorm&#34;</span>
+</span></span></code></pre></div><p>This takes an exhaustive approach that finds all of the possible routes from one location to another using the data from the source file and then finds the shortest from those. It is quite fast on a modern computer but we are doing work that is unnecessary.</p>
+<p>Whilst the code is elegant and concise, it is not as efficient as it could be. With a small dataset, performance is not really an issue but that will rapidly change with a much larger source of data. When writing F# code, the general rule of thumb with F# is:</p>
+<blockquote>
+<p>First, make it work, then make it pretty, and finally, if you need to, make it fast.</p>
+</blockquote>
+<p>Thankfully, using the accumulated data approach will enable us to refactor this code into a more efficient solution by re-using much of what we&rsquo;ve created.</p>
+<h2 id="starting-the-improvements">Starting the Improvements<a href="#starting-the-improvements" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The principle behind the improved solution is that, on average, the more steps in your journey, the longer it is likely to be. Once you have found one route that reaches the destination, you can filter out any routes that are already longer and just process the remaining routes in the next iteration.</p>
+<p>We will be looking to re-use most of what we already have except the core algorithm which is useless as we no longer need a tree structure. The first task is to remove all tree-related code. I&rsquo;ve added a minimal amount of code to make it compile. We are left with this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> System.IO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Waypoint</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Location<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Route<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span>    TotalDistance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Connection</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Start<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Finish<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Distance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> loadConnections path <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    path
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> File.ReadAllLines
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Array.skip 1
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> rows <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> row <span style="color:#66d9ef">in</span> rows <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">match</span> row<span style="color:#f92672">.</span>Split<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">[|</span>start<span style="color:#f92672">;</span>finish<span style="color:#f92672">;</span>distance<span style="color:#f92672">|]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;{row} is invalid&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.groupBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> cn<span style="color:#f92672">.</span>Start<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Map.ofList
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getUnvisited waypoint connections <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    connections
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> waypoint<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.exists <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> loc <span style="color:#f92672">-&gt;</span> loc <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">not</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Location <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish
+</span></span><span style="display:flex;"><span>        Route <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Start <span style="color:#f92672">::</span> waypoint<span style="color:#f92672">.</span>Route
+</span></span><span style="display:flex;"><span>        TotalDistance <span style="color:#f92672">=</span> waypoint<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">+</span> cn<span style="color:#f92672">.</span>Distance
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryFindShortestRoute start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec loop <span style="color:#f92672">(</span>routes<span style="color:#f92672">:</span>Waypoint <span style="color:#66d9ef">list</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>shortest<span style="color:#f92672">:</span>Waypoint option<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> routes <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> shortest
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> loop [] shortest
+</span></span><span style="display:flex;"><span>    loop <span style="color:#f92672">[{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}]</span> None
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getShortestRoute start finish <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Path.Combine<span style="color:#f92672">(__</span>SOURCE_DIRECTORY__<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;data.csv&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> loadConnections <span style="color:#75715e">// load connections
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> tryFindShortestRoute start finish <span style="color:#75715e">// find shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">function</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;No shortest route found&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Some wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">::</span> wp<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.rev<span style="color:#f92672">,</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#75715e">// output data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>getShortestRoute <span style="color:#e6db74">&#34;Cogburg&#34;</span> <span style="color:#e6db74">&#34;Leverstorm&#34;</span>
+</span></span></code></pre></div><p>This code will compile but will not produce a meaningful result.</p>
+<p>The changes I have made are:</p>
+<ul>
+<li>
+<p>I have moved the code for determining unvisited locations from the core function into its own function.</p>
+</li>
+<li>
+<p>Changed <code>findShortestRoute</code> to <code>tryFindShortestRoute</code> as it returns an <em>Option</em>. It is unlikely but we could find a journey that is not possible.</p>
+</li>
+<li>
+<p>We no longer need to filter for the shortest route since it is returned by <code>tryFindShortestRoute</code>.</p>
+</li>
+</ul>
+<h2 id="building-the-algorithm">Building the Algorithm<a href="#building-the-algorithm" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>We are still using a recursive function but it works on a list of Waypoints rather than a single Waypoint.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryFindShortestRoute start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec loop <span style="color:#f92672">(</span>routes<span style="color:#f92672">:</span>Waypoint <span style="color:#66d9ef">list</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>shortest<span style="color:#f92672">:</span>Waypoint option<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> routes <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> shortest
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> loop [] shortest
+</span></span><span style="display:flex;"><span>    loop <span style="color:#f92672">[{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}]</span> None
+</span></span></code></pre></div><p>The recursive function exits when the base case, when there are no more Waypoints to process, is met. In this case, we return the current shortest Waypoint.</p>
+<p>The steps we are going to follow in our new algorithm are:</p>
+<ol>
+<li>Get next routes and split into those that have reached their destination and those that haven&rsquo;t</li>
+<li>Find the shortest from the current iteration</li>
+<li>Compare the current shortest with the one from the latest iteration</li>
+<li>Filter out routes where the total distance is already greater than the shortest route</li>
+<li>Repeat until no routes are left to process</li>
+</ol>
+<p>Let&rsquo;s add those steps into the <code>tryFindShortestRoute</code> function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryFindShortestRoute start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec loop <span style="color:#f92672">(</span>routes<span style="color:#f92672">:</span>Waypoint <span style="color:#66d9ef">list</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>shortest<span style="color:#f92672">:</span>Waypoint option<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> routes <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> shortest
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// get next routes and split into those that have reached destination and those that haven&#39;t
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// find shortest from current iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// compare current shortest with the one from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// filter out routes where the total distance is already greater than shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            loop [] shortest
+</span></span><span style="display:flex;"><span>    loop <span style="color:#f92672">[{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}]</span> None
+</span></span></code></pre></div><p>Now we can start to implement the first step.</p>
+<p>For each Waypoint passed in, we find their unvisited locations, concatenate the resulting lists into a single list, and finally, partition the data into two parts; those that have reached the destination and those that haven&rsquo;t by using the <code>list.partition</code> function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// get next routes and split into those that have reached destination and those that haven&#39;t
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>ended<span style="color:#f92672">,</span> potential<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    routes
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.collect <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> current <span style="color:#f92672">-&gt;</span> getUnvisited current connections<span style="color:#f92672">[</span>current<span style="color:#f92672">.</span>Location<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">=</span> finish<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>We now find try to find the shortest route from those Waypoints that have reached the destination in this iteration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// find shortest from current iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> shortEnded <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> ended <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ended <span style="color:#f92672">|&gt;</span> List.minBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Some
+</span></span></code></pre></div><p>Now we compare the shortest route that we passed in to the one that we have just found to determine the shortest overall:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// compare current shortest with the one from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> currentShortest <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> shortest<span style="color:#f92672">,</span> shortEnded <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> Some se
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> Some s
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> s<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> se<span style="color:#f92672">.</span>TotalDistance <span style="color:#66d9ef">then</span> Some s <span style="color:#66d9ef">else</span> Some se
+</span></span></code></pre></div><p>We filter out all of the routes that are already longer than the current shortest route:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// filter out routes where the total distance is already greater than shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> stillInPlay <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> currentShortest <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> potential
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some cs <span style="color:#f92672">-&gt;</span> potential <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> cs<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>The final step required is to set the routes and shortest values for the next iteration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// compare current shortest with the one from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> currentShortest <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> shortest<span style="color:#f92672">,</span> shortEnded <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> Some se
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> Some s
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> s<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> se<span style="color:#f92672">.</span>TotalDistance <span style="color:#66d9ef">then</span> Some s <span style="color:#66d9ef">else</span> Some se
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// filter out routes where the total distance is already greater than shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> stillInPlay <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> currentShortest <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> potential
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some cs <span style="color:#f92672">-&gt;</span> potential <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> cs<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>loop stillInPlay currentShortest
+</span></span></code></pre></div><p>That&rsquo;s it for the algorithm. We finally end up with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryFindShortestRoute start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec loop <span style="color:#f92672">(</span>routes<span style="color:#f92672">:</span>Waypoint <span style="color:#66d9ef">list</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>shortest<span style="color:#f92672">:</span>Waypoint option<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> routes <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> shortest
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// get next routes and split into those that have reached destination and those that haven&#39;t
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>ended<span style="color:#f92672">,</span> potential<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                routes
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|&gt;</span> List.collect <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> current <span style="color:#f92672">-&gt;</span> getUnvisited current connections<span style="color:#f92672">[</span>current<span style="color:#f92672">.</span>Location<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|&gt;</span> List.partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">=</span> finish<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// find shortest from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> shortEnded <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> ended <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ended <span style="color:#f92672">|&gt;</span> List.minBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Some
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// compare current shortest with the one from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> currentShortest <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> shortest<span style="color:#f92672">,</span> shortEnded <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> Some se
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> Some s
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> s<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> se<span style="color:#f92672">.</span>TotalDistance <span style="color:#66d9ef">then</span> Some s <span style="color:#66d9ef">else</span> Some se
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// filter out routes where the total distance is already greater than shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> stillInPlay <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> currentShortest <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> potential
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some cs <span style="color:#f92672">-&gt;</span> potential <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> cs<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            loop stillInPlay currentShortest
+</span></span><span style="display:flex;"><span>    loop <span style="color:#f92672">[{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}]</span> None
+</span></span></code></pre></div><p>We should now run our code in FSI to find the shortest route between Cogburg and Leverstorm:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>getShortestRoute <span style="color:#e6db74">&#34;Cogburg&#34;</span> <span style="color:#e6db74">&#34;Leverstorm&#34;</span>
+</span></span></code></pre></div><p>We should see a result that states:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#f92672">([</span><span style="color:#e6db74">&#34;Cogburg&#34;</span><span style="color:#f92672">;</span> <span style="color:#e6db74">&#34;Copperhold&#34;</span><span style="color:#f92672">;</span> <span style="color:#e6db74">&#34;Leverstorm&#34;</span><span style="color:#f92672">],</span> 1616<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>There&rsquo;s more code and it isn&rsquo;t quite as elegant as before but it is potentially much more efficient.</p>
+<h2 id="final-code">Final Code<a href="#final-code" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>This is the code we finished with after the performance improvements:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> System.IO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Waypoint</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Location<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Route<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span>    TotalDistance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Connection</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Start<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Finish<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Distance<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> loadConnections path <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    path
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> File.ReadAllLines
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Array.skip 1
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> rows <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> row <span style="color:#66d9ef">in</span> rows <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">match</span> row<span style="color:#f92672">.</span>Split<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">[|</span>start<span style="color:#f92672">;</span>finish<span style="color:#f92672">;</span>distance<span style="color:#f92672">|]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span> Start <span style="color:#f92672">=</span> finish<span style="color:#f92672">;</span> Finish <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Distance <span style="color:#f92672">=</span> int distance <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;{row} is invalid&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.groupBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> cn<span style="color:#f92672">.</span>Start<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Map.ofList
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getUnvisited current connections <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    connections
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> current<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.exists <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> loc <span style="color:#f92672">-&gt;</span> loc <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">not</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cn <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Location <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Finish
+</span></span><span style="display:flex;"><span>        Route <span style="color:#f92672">=</span> cn<span style="color:#f92672">.</span>Start <span style="color:#f92672">::</span> current<span style="color:#f92672">.</span>Route
+</span></span><span style="display:flex;"><span>        TotalDistance <span style="color:#f92672">=</span> current<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">+</span> cn<span style="color:#f92672">.</span>Distance
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryFindShortestRoute start finish <span style="color:#f92672">(</span>connections<span style="color:#f92672">:</span>Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>Connection <span style="color:#66d9ef">list</span><span style="color:#f92672">&gt;)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rec loop <span style="color:#f92672">(</span>routes<span style="color:#f92672">:</span>Waypoint <span style="color:#66d9ef">list</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>shortest<span style="color:#f92672">:</span>Waypoint option<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> routes <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> shortest
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// get next routes and split into those that have reached destination and those that haven&#39;t
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>ended<span style="color:#f92672">,</span> potential<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                routes
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|&gt;</span> List.collect <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> current <span style="color:#f92672">-&gt;</span> getUnvisited current connections<span style="color:#f92672">[</span>current<span style="color:#f92672">.</span>Location<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|&gt;</span> List.partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">=</span> finish<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// find shortest from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> shortEnded <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> ended <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> [] <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ended <span style="color:#f92672">|&gt;</span> List.minBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Some
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// compare current shortest with the one from latest iteration
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> currentShortest <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> shortest<span style="color:#f92672">,</span> shortEnded <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> Some se
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> None <span style="color:#f92672">-&gt;</span> Some s
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some s<span style="color:#f92672">,</span> Some se <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> s<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> se<span style="color:#f92672">.</span>TotalDistance <span style="color:#66d9ef">then</span> Some s <span style="color:#66d9ef">else</span> Some se
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// filter out routes where the total distance is already greater than shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> stillInPlay <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">match</span> currentShortest <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> potential
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">|</span> Some cs <span style="color:#f92672">-&gt;</span> potential <span style="color:#f92672">|&gt;</span> List.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#f92672">&lt;</span> cs<span style="color:#f92672">.</span>TotalDistance<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            loop stillInPlay currentShortest
+</span></span><span style="display:flex;"><span>    loop <span style="color:#f92672">[{</span> Location <span style="color:#f92672">=</span> start<span style="color:#f92672">;</span> Route <span style="color:#f92672">=</span> []<span style="color:#f92672">;</span> TotalDistance <span style="color:#f92672">=</span> 0 <span style="color:#f92672">}]</span> None
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getShortestRoute start finish <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Path.Combine<span style="color:#f92672">(__</span>SOURCE_DIRECTORY__<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;data.csv&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> loadConnections <span style="color:#75715e">// load connections
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> tryFindShortestRoute start finish <span style="color:#75715e">// find shortest route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">function</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;No shortest route found&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Some wp <span style="color:#f92672">-&gt;</span> wp<span style="color:#f92672">.</span>Location <span style="color:#f92672">::</span> wp<span style="color:#f92672">.</span>Route <span style="color:#f92672">|&gt;</span> List.rev<span style="color:#f92672">,</span> wp<span style="color:#f92672">.</span>TotalDistance <span style="color:#75715e">// output data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>getShortestRoute <span style="color:#e6db74">&#34;Cogburg&#34;</span> <span style="color:#e6db74">&#34;Leverstorm&#34;</span>
+</span></span></code></pre></div><p>I also adapted this new code to Exercise 2.2 where we try to find the fastest route given distance and speed values in the CSV file. The code is available here:</p>
+<p><a href="https://github.com/ianrussellsoftwarepark/shortest-route-kata/blob/main/Brownbag01/kata-loop-2-2.fsx">https://github.com/ianrussellsoftwarepark/shortest-route-kata/blob/main/Brownbag01/kata-loop-2-2.fsx</a></p>
+<p>Trustbit are intending to produce more tasks and katas like this in the future, so you might want to watch them on Github so that you don&rsquo;t miss out.</p>
+<h2 id="and-finally">And Finally<a href="#and-finally" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>If you like this post and want to learn more about F#, I&rsquo;ve written a free ebook called Essential F# that you can download from:</p>
+<p><a href="https://leanpub.com/essential-fsharp">https://leanpub.com/essential-fsharp</a></p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/essential-fsharp/">
+                <span class="button__text">Essential F# ebook</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

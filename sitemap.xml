@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://ijrussell.github.io/posts/improve-transport-tycoon/</loc>
+    <lastmod>2022-07-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ijrussell.github.io/</loc>
+    <lastmod>2022-07-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ijrussell.github.io/posts/</loc>
+    <lastmod>2022-07-31T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://ijrussell.github.io/about/</loc>
     <lastmod>2022-07-30T00:00:00+00:00</lastmod>
   </url><url>
@@ -11,13 +20,7 @@
     <loc>https://ijrussell.github.io/posts/essential-fsharp/</loc>
     <lastmod>2022-07-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ijrussell.github.io/</loc>
-    <lastmod>2022-07-30T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://ijrussell.github.io/posts/top-10-books/</loc>
-    <lastmod>2022-07-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ijrussell.github.io/posts/</loc>
     <lastmod>2022-07-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ijrussell.github.io/categories/</loc>
