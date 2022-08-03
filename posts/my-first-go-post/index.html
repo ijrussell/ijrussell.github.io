@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>I&#39;m Learning to Program in Go  :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="In this post, my first since starting to learn Go, I will work through the use case from Chapter 1 of Essential F# and show you how I think writing Go from a .NET dev perspective." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/my-first-go-post/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="I&#39;m Learning to Program in Go ">
+<meta property="og:description" content="In this post, my first since starting to learn Go, I will work through the use case from Chapter 1 of Essential F# and show you how I think writing Go from a .NET dev perspective." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/my-first-go-post/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-08-03 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/my-first-go-post/">I&rsquo;m Learning to Program in Go</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-08-03
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>I&rsquo;ve set myself the task of learning Go whilst I work out what I want to do next with my life. I have read For the Love of Go by John Arundel cover to cover and back again and have just started his next book, The Power of Go. I&rsquo;m going to try to deliver at least one post per week, solving a new problem each time. I&rsquo;m under no illusions that my first few posts will not be in any way idiomatic Go as I&rsquo;m quite settled into a functional programming style with F#.</p>
+<h2 id="the-task">The Task<a href="#the-task" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>I decided to try to solve the domain problem from Chapter 1 of my Effective F# ebook with my current limited understanding of Go. Whilst it&rsquo;s more complex than &ldquo;Hello, world!&rdquo;, it does force me to get my environment set up and showcase some of the things that I have/haven&rsquo;t learned.</p>
+<p>The task we are to implement is to calculate the discounted price for different customers using the following user story:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>Feature: Applying a discount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Scenario: Eligible Registered Customers get 10% discount when they spend £100 or more
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Given the following Registered Customers
+</span></span><span style="display:flex;"><span>|Customer Id|Is Eligible|
+</span></span><span style="display:flex;"><span>|John       |true       |
+</span></span><span style="display:flex;"><span>|Mary       |true       |
+</span></span><span style="display:flex;"><span>|Richard    |false      |
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>When [Customer Id] spends [Spend]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Then their order total will be [Total]
+</span></span><span style="display:flex;"><span>|Customer Id| Spend| Total|
+</span></span><span style="display:flex;"><span>|Mary       | 99.00| 99.00|
+</span></span><span style="display:flex;"><span>|John       | 100.00| 90.00|
+</span></span><span style="display:flex;"><span>|Richard    | 100.00| 100.00|
+</span></span><span style="display:flex;"><span>|Sarah      | 100.00| 100.00|
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Notes:
+</span></span><span style="display:flex;"><span>Sarah is not a Registered Customer
+</span></span><span style="display:flex;"><span>Only Registered Customers can be Eligible
+</span></span></code></pre></div><p>I&rsquo;m going to approach the task the way that I&rsquo;ve been learning Go, test first.</p>
+<h2 id="getting-started">Getting Started<a href="#getting-started" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Create a folder called <em>discount</em> and open it in VS Code.</p>
+<p>In the Terminal, type the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">mod</span> <span style="color:#a6e22e">init</span> <span style="color:#a6e22e">discount</span>
+</span></span></code></pre></div><p>This creates a file called <em>go.mod</em> that contains code that looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">discount</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#ae81ff">1.19</span>
+</span></span></code></pre></div><p>Further discussion on this will have to wait for a future post.</p>
+<p>Add two files to the folder: <em>discount.go</em> and <em>discount_test.go</em>. That&rsquo;s correct, you put the test file in the same folder as the source file! The *<em>_test.go</em> convention is required by the testing package we are going to use.</p>
+<p>At the top of <em>discount.go</em>, add the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">discount</span>
+</span></span></code></pre></div><p>We will reference this package name in the <em>discount_test.go</em> file.</p>
+<p>Add the following to the top of <em>discount_test.go</em>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">discount_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;discount&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>We are referencing both our <em>discounts</em> package and the <em>testing</em> package from the Go standard library.</p>
+<p>We are now ready to try to write our first test.</p>
+<h2 id="basic-test-structure">Basic Test Structure<a href="#basic-test-structure" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>We create a simple function that starts with the name <em>Test</em> and we pass in a testing instance as a parameter:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestBehaviourDescription</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span> <span style="color:#75715e">// expected value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span> <span style="color:#75715e">// actual value from function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Don&rsquo;t worry about the <code>*</code> prefixing the type of the <code>t</code> parameter.</p>
+<p>The <code>t.Parallel()</code> tells the testing instance to run this test in parallel with any others.</p>
+<p>The <code>want := 1</code> and <code>got := 1</code> are variable assignments where the type is inferred by the compiler. This is a shorter way than this original style:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// var name type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">want</span> <span style="color:#66d9ef">int</span> <span style="color:#75715e">// zero value of type if not set
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">isTrue</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#75715e">// true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">want</span> = <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>If you don&rsquo;t want to set the value of the variable, use the older style where it will be set to the zero value of that type. Otherwise use this shorter style:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span> <span style="color:#75715e">// type is inferred
+</span></span></span></code></pre></div><p>So, we have a value we expect, <code>want</code>and a value we calculate, <code>got</code>, which we compare to each other, and if they don&rsquo;t match, we report it as an error.</p>
+<p>Now that we know what a basic test function looks like, let&rsquo;s get started solving our problem.</p>
+<h2 id="initial-version">Initial Version<a href="#initial-version" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>We will start with Richard, who spends sufficient to potentially get a discount and is registered but not eligible, so will not qualify for a discount.</p>
+<p>Let&rsquo;s add the <code>want</code> value from the data table, create a <em>Customer</em> instance, and call the <code>Calculate</code> function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRegisteredNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Let&rsquo;s add sufficient code to <em>discount.go</em> to make it compile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">discount</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Customer</span> <span style="color:#66d9ef">struct</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Customer</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>For the <em>Customer</em> type, we are creating a <code>struct</code> with no properties as we don&rsquo;t need them yet. The <code>struct</code> is the primary data structure in Go and has no behaviour, just data.</p>
+<p>The <code>Calculate</code> function takes two input parameters, one of *<em>Customer</em> and one of <em>float64</em>, and a return type of <em>float64</em>.</p>
+<p>Run the test by typing the following in the Terminal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>We now have a failing test that we need to fix.</p>
+<p>Let&rsquo;s do the minimum to make it succeed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Customer</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If we run the test again, it should succeed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>Whilst the test passes, we have some additional data that we need to add to the Customer and the test:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Customer</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">IsRegistered</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">IsEligible</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Notice that we don&rsquo;t need to add the <code>Name</code> property to the Customer instance in the test:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRegisteredNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Run the test again to confirm that it still passes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>Now we could continue with this test-first approach but for this blog post, we are going to assume that that is what I did!</p>
+<p>Let&rsquo;s add the logic to the <code>Calculate</code> function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Customer</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">IsRegistered</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">IsEligible</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Add finally, the remaining tests for the other three customers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">discount_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;discount&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleWithDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">90.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">99.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">99.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRegisteredNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestGuestNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">false</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">discount</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">c</span>, <span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Run the tests to make sure that all is well:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>So far, so good. However, I&rsquo;m worried about two things; the boolean properties and the ownership of the code. Time for a rethink. Ownership first.</p>
+<h2 id="rethinking-ownership">Rethinking Ownership<a href="#rethinking-ownership" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The <em>Customer</em> type being in a package for discount seems wrong. In fact, when you look at the <code>Calculate</code> function, it all relates to the <em>Customer</em> type.</p>
+<p>We need to rename the files and references plus the module name in <em>go.mod</em> to <code>customer</code>. You should also rename the folder as well. Reload the folder into VS Code.</p>
+<p>The <em>customer.go</em> file should start:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer</span>
+</span></span></code></pre></div><p>The <em>customer_test.go</em> file should start:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;customer&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>As the <code>Calculate</code> function is <em>Customer</em>-centric, we can adapt it slightly and turn it into a method instead of a function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Customer</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">IsRegistered</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">IsEligible</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Notice that we have moved the Customer input parameter before the Calculate name. This new parameter is called the <em>receiver</em>.</p>
+<p>This change has an impact on our tests because the <code>Calculate</code> function is now a method on the <em>Customer</em> instance:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleWithDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">90.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">99.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">99.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRegisteredNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestGuestNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">IsEligible</span>: <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">IsRegistered</span>: <span style="color:#66d9ef">false</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>After making these changes, run the tests again from the Terminal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>Much nicer. Now we need to replace those boolean properties with something safer and more domain-centric.</p>
+<h2 id="further-improvements">Further Improvements<a href="#further-improvements" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Sadly, we don&rsquo;t have discriminated unions in Go, so we have to look at alternatives. I&rsquo;m not really au fait with interfaces in Go, which I think I&rsquo;m going to need, so I&rsquo;m going to use a simpler construct: constants. We create a new type called <em>Status</em> that wraps a value, in this case, I used a string, set the type of each constant as <em>Status</em>, add a new property to the <em>Customer</em> struct, and use the <em>Eligible</em> status in the <code>Calculate</code> method logic:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Status</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Guest</span> <span style="color:#a6e22e">Status</span> = <span style="color:#e6db74">&#34;G&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Registered</span> <span style="color:#a6e22e">Status</span> = <span style="color:#e6db74">&#34;R&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Eligible</span> <span style="color:#a6e22e">Status</span> = <span style="color:#e6db74">&#34;E&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Customer</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Status</span> <span style="color:#a6e22e">Status</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Customer</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Status</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">Eligible</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>We have to make a change in each test to accommodate the new property on the <em>Customer</em> struct:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;customer&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleWithDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">90.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">Status</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestEligibleNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">99.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">Status</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">99.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRegisteredNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">Status</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Registered</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestGuestNoDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">want</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Customer</span>{<span style="color:#a6e22e">Status</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Guest</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#ae81ff">100.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Once this is done, the code should compile and the tests should succeed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span>
+</span></span></code></pre></div><p>Whilst the code is better than it was, it doesn&rsquo;t give me the type safety that I&rsquo;ve come to expect from F#. I&rsquo;m hoping that it&rsquo;s just lack of knowledge that is holding me back.</p>
+<h2 id="finally">Finally<a href="#finally" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>That&rsquo;s the end of my first post using Go. It has been a pleasant experience working through <em>For the Love of Go</em> and I highly recommend it to anyone wanting to learn Go in a practical, hands-on way. You can purchase it like I did from <a href="https://bitfieldconsulting.com/books/love">https://bitfieldconsulting.com/books/love</a>.</p>
+<p>In the next post, I&rsquo;ll dive deeper into my current understanding of functions.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/improve-transport-tycoon/">
+                <span class="button__text">A More Efficient Solution of the Shortest Route Kata</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
