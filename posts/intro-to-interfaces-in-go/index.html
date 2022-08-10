@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Introduction to Interfaces in Go  :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="In the last post, we looked at how to solve the use case from Chapter 1 of my Essential F# ebook using my limited knowledge of Go. In this post, we will use my new understanding of interfaces in Go to solve the same problem." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/intro-to-interfaces-in-go/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Introduction to Interfaces in Go ">
+<meta property="og:description" content="In the last post, we looked at how to solve the use case from Chapter 1 of my Essential F# ebook using my limited knowledge of Go. In this post, we will use my new understanding of interfaces in Go to solve the same problem." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/intro-to-interfaces-in-go/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-08-10 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/intro-to-interfaces-in-go/">Introduction to Interfaces in Go</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-08-10
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>In the last post, we looked at how to solve the use case from Chapter 1 of my Essential F# ebook using my limited knowledge of Go. In this post, we will use my new understanding of interfaces to solve the same problem.</p>
+<h2 id="getting-started">Getting Started<a href="#getting-started" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Open the folder you created in the last post in VS Code.</p>
+<p>Add two new files: <em>customer2.go</em> and <em>customer2_test.go</em> to the folder.</p>
+<p>Add the following code to the top of <em>customer2.go</em>;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer</span>
+</span></span></code></pre></div><p>The <em>customer2_test.go</em> file should start with the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;customer&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>We are now ready to start our task but first, a little about interfaces in Go.</p>
+<h2 id="interfaces-in-go">Interfaces in Go<a href="#interfaces-in-go" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>You don&rsquo;t explicitly implement interfaces in Go. If a concrete type implements all of the methods defined in the interface, then it implements the interface. It works more like duck typing in dynamic languages where you maintain decoupling but with the addition of type safety.</p>
+<p>If like me, you&rsquo;ve come from a statically typed language like F#, C#, or Java, this will be very different from what you are used to. My initial thoughts on interfaces in Go are unprintable but I&rsquo;ve come to appreciate what the language designers were trying to achieve.</p>
+<h2 id="initial-version">Initial Version<a href="#initial-version" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The first thing to do is to create an interface for our required behaviour:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CustomerDiscount</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p><strong>Interfaces in Go are about behaviour, not data</strong></p>
+</blockquote>
+<p>Next, we&rsquo;ll add three structs for the <em>Customer</em> states:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Eligible</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Registered</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Guest</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>To implement the interface, we need to create methods for each of these structs that match the <code>Calculate</code> method:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Eligible</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Registered</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Guest</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>At this stage, we will add the discount calculation logic to each method. We will fix this later in this post.</p>
+<p>We now need to add a function that we can call that takes the interface as a parameter and delegates the call to the methods we have just created:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>We can&rsquo;t make this a method because that is not supported behaviour for interfaces:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Invalid receiver - pointer or interface type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>) <span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The next task is to create tests for our expected behaviour. We can do this in a single test:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestCalculateDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">testCase</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">customer</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CustomerDiscount</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">spend</span>  <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">want</span>   <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">testCases</span> <span style="color:#f92672">:=</span> []<span style="color:#a6e22e">testCase</span>{
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Mary&#34;</span>}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;John&#34;</span>}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">90.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Registered</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Richard&#34;</span>}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Guest</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Sarah&#34;</span>}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">tc</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">testCases</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">customer</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>We added a struct to store our test cases, a slice to store our test case data, and finally, we loop through the collection of test cases, calling our <code>CalculateDiscount</code> function for each test case.</p>
+<p>Using the <code>range</code> function, we also have access to the index but we don&rsquo;t need it, so we mark it as not required with the <code>_</code> character.</p>
+<p>Run the test by typing the following in the Terminal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>go test
+</span></span></code></pre></div><p>Because we are not using the Name property in the tests, we can remove it. The values will be set to the zero value for the string:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestCalculateDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">testCase</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">customer</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CustomerDiscount</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">spend</span>  <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">want</span>   <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">testCases</span> <span style="color:#f92672">:=</span> []<span style="color:#a6e22e">testCase</span>{
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">90.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Registered</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Guest</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">tc</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">testCases</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">customer</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>It&rsquo;s looking quite nice already but there are a couple of things we will want to improve.</p>
+<h2 id="improvements">Improvements<a href="#improvements" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>There are two things that need to be improved at this stage: centralising the logic into a single function and limiting the visibility of things outside the package.</p>
+<h3 id="centralise-logic">Centralise Logic<a href="#centralise-logic" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Rather than having the logic spread across three structs, we should move it all to a new function and call that from each method:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">c</span>.(<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">Eligible</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The function name starts with a lower case letter which means that it is not visible outside this package.</p>
+<p>We have used a switch expression with a built-in function that gives us access to the type that implements the <code>CustomerDiscount</code> interface. This isn&rsquo;t a closed set like an F# discriminated union, so we could have other concrete implementations of the interface that could be passed in outside of the ones that we have defined.</p>
+<p>The next step is to replace the logic in the methods with a call to the new function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Eligible</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Registered</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Guest</span>) <span style="color:#a6e22e">Calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Much nicer! All of the logic is now in one function rather than three.</p>
+<h3 id="visibility">Visibility<a href="#visibility" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We don&rsquo;t need to expose the methods because we want the caller to use the <code>CalculateDiscount</code> function. Rename the <code>Calculate</code> method on the interface to <code>calculate</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CustomerDiscount</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Rename the methods to match this new name:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Eligible</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Registered</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Guest</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Finally, use the new name in the <code>CalculateDiscount</code> function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Run the tests by typing the following in the Terminal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>go test
+</span></span></code></pre></div><p>This now means that only our types and the <code>CalculateDiscount</code> function are visible outside the <code>customer</code> package.</p>
+<h2 id="the-finished-code">The Finished Code<a href="#the-finished-code" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The final code for <em>customer2.go</em> is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CustomerDiscount</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Eligible</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Registered</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Guest</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">c</span>.(<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">Eligible</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">100.0</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.9</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spend</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Eligible</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Registered</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">Guest</span>) <span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculateDiscount</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">CustomerDiscount</span>, <span style="color:#a6e22e">spend</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">calculate</span>(<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The final code for <em>customer2_test.go</em> is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">customer_test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;customer&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestCalculateDiscount</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Parallel</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">testCase</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">customer</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CustomerDiscount</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">spend</span>  <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">want</span>   <span style="color:#66d9ef">float64</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">testCases</span> <span style="color:#f92672">:=</span> []<span style="color:#a6e22e">testCase</span>{
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Eligible</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">90.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">90.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Registered</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#a6e22e">customer</span>: <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">Guest</span>{}, <span style="color:#a6e22e">spend</span>: <span style="color:#ae81ff">100.0</span>, <span style="color:#a6e22e">want</span>: <span style="color:#ae81ff">100.0</span>},
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">tc</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">testCases</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">got</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">CalculateDiscount</span>(<span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">customer</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">spend</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">got</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;want %f, got %f&#34;</span>, <span style="color:#a6e22e">tc</span>.<span style="color:#a6e22e">want</span>, <span style="color:#a6e22e">got</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="and-finally">And Finally<a href="#and-finally" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>That&rsquo;s my second post using Go complete. To my eyes, this post is a much nicer solution to our original problem than the <code>const</code> approach from the previous post. The Go language is very different from seemingly similar ones like C# and Java. I&rsquo;m actually enjoying my initial learning but I know that it will get harder when I start to look at pointers and channels.</p>
+<p>In the next post, I&rsquo;ll start looking at collections and generics.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/my-first-go-post/">
+                <span class="button__text">I&#39;m Learning to Program in Go </span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
