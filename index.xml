@@ -8,6 +8,23 @@
     <language>en-gb</language>
     <lastBuildDate>Wed, 10 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>About</title>
+      <link>https://ijrussell.github.io/about/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ijrussell.github.io/about/</guid>
+      <description>My name is Ian and I&amp;rsquo;ve been writing software for over 25 years, most of it in the .NET (Core) space. I have been using C# since 2003 and F# since 2012. I have been a regular presenter since 2010 at .NET User Groups and community conferences around the UK, mainly talking about F#, functional programming, and Domain-Driven Design.
+I&amp;rsquo;ve written a free ebook, Essential F#, which you can download from https://leanpub.</description>
+      <content>&lt;p&gt;My name is Ian and I&amp;rsquo;ve been writing software for over 25 years, most of it in the .NET (Core) space. I have been using C# since 2003 and F# since 2012. I have been a regular presenter since 2010 at .NET User Groups and community conferences around the UK, mainly talking about F#, functional programming, and Domain-Driven Design.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve written a free ebook, &lt;strong&gt;Essential F#&lt;/strong&gt;, which you can download from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt;. The source markdown files can be found at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;https://github.com/ijrussell/essential-fsharp&lt;/a&gt;. You are most welcome to make contributions to improve the content.&lt;/p&gt;
+&lt;p&gt;Many of my previous F# blog posts can be found on the Trustbit blog: &lt;a href=&#34;https://trustbit.tech/blog&#34;&gt;https://trustbit.tech/blog&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m a qualified Teacher of Mathematics who decided in my final year of training that I preferred computers to children. :)&lt;/p&gt;
+&lt;p&gt;Follow me on Twitter: &lt;a href=&#34;https://twitter.com/ijrussell&#34;&gt;https://twitter.com/ijrussell&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m currently learning golang.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
       <title>Introduction to Interfaces in Go </title>
       <link>https://ijrussell.github.io/posts/intro-to-interfaces-in-go/</link>
       <pubDate>Wed, 10 Aug 2022 00:00:00 +0000</pubDate>
@@ -941,22 +958,6 @@ This category of exercise lends itself to using recursion. If you want to see al
 &lt;h2 id=&#34;and-finally&#34;&gt;And Finally&lt;/h2&gt;
 &lt;p&gt;If you like this post and want to learn more about F#, I&amp;rsquo;ve written a free ebook called Essential F# that you can download from:&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt;&lt;/p&gt;
-</content>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://ijrussell.github.io/about/</link>
-      <pubDate>Sat, 30 Jul 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://ijrussell.github.io/about/</guid>
-      <description>My name is Ian and I&amp;rsquo;ve been writing software for over 25 years, most of it in the .NET (Core) space. I have been using C# since 2003 and F# since 2012. I have been a regular presenter at .NET User Groups and community conferences around the UK, mainly talking about F#, functional programming, and Domain-Driven Design.
-I&amp;rsquo;m a qualified Teacher of Mathematics who decided in my final year of training that I preferred computers to children.</description>
-      <content>&lt;p&gt;My name is Ian and I&amp;rsquo;ve been writing software for over 25 years, most of it in the .NET (Core) space. I have been using C# since 2003 and F# since 2012. I have been a regular presenter at .NET User Groups and community conferences around the UK, mainly talking about F#, functional programming, and Domain-Driven Design.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;m a qualified Teacher of Mathematics who decided in my final year of training that I preferred computers to children. :)&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;ve written a free ebook, Essential F#, which you can download from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Many of my previous F# blog posts can be found on the Trustbit blog (&lt;a href=&#34;https://trustbit.tech/blog)&#34;&gt;https://trustbit.tech/blog)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;m currently learning golang.&lt;/p&gt;
 </content>
     </item>
     
