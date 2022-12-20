@@ -6,7 +6,63 @@
     <description>Recent content in Posts on ijrussell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Wed, 10 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 20 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Retrospective 2022</title>
+      <link>https://ijrussell.github.io/posts/retrospective-2022/</link>
+      <pubDate>Tue, 20 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ijrussell.github.io/posts/retrospective-2022/</guid>
+      <description>I don&amp;rsquo;t normally do retrospectives but this year has been extraordinary for a number of reasons with soaring highs and deep lows. We&amp;rsquo;ve also had a long period of enforced isolation due to COVID Restrictions that adversely affected me more than I realised at the time.
+I&amp;rsquo;ve been writing code professionally for over 25 years, but have been wondering for a while if there are other things that I could/should do instead.</description>
+      <content>&lt;p&gt;I don&amp;rsquo;t normally do retrospectives but this year has been extraordinary for a number of reasons with soaring highs and deep lows. We&amp;rsquo;ve also had a long period of enforced isolation due to COVID Restrictions that adversely affected me more than I realised at the time.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve been writing code professionally for over 25 years, but have been wondering for a while if there are other things that I could/should do instead. I enjoy solving problems but have found that I&amp;rsquo;m having to deal with more and more bureaucracy in software development through the standardisation of Scrum and Jira in the workplace.&lt;/p&gt;
+&lt;h2 id=&#34;mentoring-in-f&#34;&gt;Mentoring in F#&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve been offering free one-to-one remote mentoring to folks wanting to learn F# since the start of 2021. I limit the numbers to three at most running in parallel. Whilst I like reading, I learn so much faster by doing, and having a dedicated mentor has to be the ultimate approach. YMMV. The cadence for the sessions was one blog post/book chapter per week for the first four to six weeks and then speed up from there. Understanding the fundamentals covered in the first five chapters of the book is vital to writing elegant F# code.&lt;/p&gt;
+&lt;p&gt;A number of the changes and improvements to my book came through mentoring sessions.&lt;/p&gt;
+&lt;p&gt;Despite continuing to offer sessions, I haven&amp;rsquo;t had a mentee since July. I&amp;rsquo;m really only interested in newcomers to the language as there are other support groups like Slack for established F#ers.&lt;/p&gt;
+&lt;h2 id=&#34;essential-f-book&#34;&gt;Essential F# Book&lt;/h2&gt;
+&lt;p&gt;In April, I made the decision to produce an update to my F# ebook for F# 6, which along with a number of improvements suggested through mentoring, I would make free for all readers from the release date in July.&lt;/p&gt;
+&lt;p&gt;Thanks to a small but dedicated group of reviewers, the book was published in early July.&lt;/p&gt;
+&lt;h3 id=&#34;testimonials&#34;&gt;&lt;em&gt;Testimonials&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;I&amp;rsquo;ve received a few very nice comments about the book from some nice folks, a few of which I have included here:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;I&amp;rsquo;ve been using F# for some time, mainly to automate tasks, so I have a bit of experience with the language. Your teaching approach is helping me connect the dots and get a better understanding of the concepts.&amp;rdquo; - Stefan Rohlfing&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;One of the essential cornerstones of #fsharp, freshly redone. Congrats @ijrussell, and enjoy it, future-f#-devs!&amp;rdquo; - Chet Husk&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Ian is a tremendous writer and does a great job in approaching #fsharp both in finding commonalities with other technologies as well as clearly showing where the language effectively stands apart. Highly recommended! I appreciate the conversational style &amp;ndash; #fsharp as an ecosystem is blessed with a broad set of explainers - each with their own perspective. The language and is deep &amp;amp; wide enough that it deserves expansive treatment. I feel like your book has helped me with fresh approaches.&amp;rdquo; - Houston H. Haynes&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;If you have any comments to make about the book, please contact me via Twitter or GitHub (ijrussell).&lt;/p&gt;
+&lt;h3 id=&#34;royalties&#34;&gt;&lt;em&gt;Royalties&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;The initial version of the book was priced at $12.50, with the 80% royalties being paid to the F# Software Foundation.&lt;/p&gt;
+&lt;p&gt;Lifetime purchases: 427 paid and 1760 free.&lt;/p&gt;
+&lt;p&gt;Royalties: $4100 royalties to the F# Software Foundation and $125 under quarantine at LeanPub.&lt;/p&gt;
+&lt;h3 id=&#34;source-code&#34;&gt;&lt;em&gt;Source Code&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;The source code for the book, in Markdown format, is available at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;Essential F#&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I will happily process reported issues or even pull requests if you want to fix the problem yourself.&lt;/p&gt;
+&lt;p&gt;There doesn&amp;rsquo;t need to be another significant update of the book until .NET 8 LTS is released in late 2023.&lt;/p&gt;
+&lt;h3 id=&#34;learnings&#34;&gt;&lt;em&gt;Learnings&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;It&amp;rsquo;s hard work with very little upside. I wrote this book because there was nothing else like it out there, and I was privileged enough to not care about the costs involved.&lt;/p&gt;
+&lt;p&gt;I wonder if making it free has been a double-edged sword? Yes, it makes it more widely affordable but many will look at it as &amp;ldquo;if it&amp;rsquo;s free, it can&amp;rsquo;t be any good?&amp;rdquo;. Not being an MVP, I didn&amp;rsquo;t feel that I could approach the main technical publishers with this book. I&amp;rsquo;d have needed to sell four times the number of books to match the royalties I&amp;rsquo;ve passed on to the F# Software Foundation.&lt;/p&gt;
+&lt;p&gt;Overall, I&amp;rsquo;m incredibly proud of the end result. I wish that it was more popular, not for my benefit but because I think that every .NET developer should spend time learning F#.&lt;/p&gt;
+&lt;h2 id=&#34;employment&#34;&gt;Employment&lt;/h2&gt;
+&lt;p&gt;I left Trustbit in July after three years of working on a complicated F# application dealing with over 10_000_000 GPS signals per day. Trustbit is a great Company to work for with an excellent group of colleagues to collaborate with and some very interesting projects to work on. My leaving was not a reflection on them but rather my need to take a long break from software development.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve had a couple of interviews since July but I wasn&amp;rsquo;t really mentally prepared for either as I&amp;rsquo;m a team player and by their nature, interviews are about each person&amp;rsquo;s achievements. Being in a team means you don&amp;rsquo;t apportion blame and you don&amp;rsquo;t individually claim the credit.&lt;/p&gt;
+&lt;h2 id=&#34;learning-go-and-haskell&#34;&gt;Learning Go and Haskell&lt;/h2&gt;
+&lt;p&gt;It&amp;rsquo;s no secret that I have been looking outside the Microsoft ecosystem for inspiration and have been learning Go and Haskell for the last few months. Whilst I like both languages, I prefer F# for the way that my brain works. If forced to choose, I would pick Haskell because I like the benefits of functional programming.&lt;/p&gt;
+&lt;h2 id=&#34;reviewing-a-functional-programming-in-c-book&#34;&gt;Reviewing a Functional Programming in C# Book&lt;/h2&gt;
+&lt;p&gt;I have just completed the second round of formal reviews for a new book on Functional Programming in C# that will be released next year. I really like functional programming but the noise when using C# puts me off - It&amp;rsquo;s just so much cleaner/easier in F#.&lt;/p&gt;
+&lt;h2 id=&#34;advent-of-code&#34;&gt;Advent of Code&lt;/h2&gt;
+&lt;p&gt;I started the Advent of Code on December 1st, knowing that I wouldn&amp;rsquo;t really have enough time from day 10 until day 20 and that is how it has worked out. It was nice working on quirky challenges and comparing my solutions with other F# developers and those using other interesting languages. The place where .NET falls down is with text parsing. If I do this next year, I need to spend time looking at a text parsing tool like FParsec. I&amp;rsquo;m aiming to catch up with the challenges that I&amp;rsquo;ve missed before the New Year.&lt;/p&gt;
+&lt;h2 id=&#34;the-future&#34;&gt;The Future&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;m assuming that my future lies outside .NET, maybe outside of software development but unlikely. I love working with F# but the opportunities to use it are almost non-existent in my local area and quite rare remotely outside of banking, crypto, or gambling.&lt;/p&gt;
+&lt;p&gt;At the moment, I feel like the old dog at the Pound who never gets picked, overlooked for the new shiny puppies who will chew all your furniture and make a smelly mess all over the place. I will never be a perfect physical specimen but then I never was, but I play well with others and help to bring out the best in the others on my team.&lt;/p&gt;
+</content>
+    </item>
+    
     <item>
       <title>Introduction to Interfaces in Go </title>
       <link>https://ijrussell.github.io/posts/intro-to-interfaces-in-go/</link>
