@@ -456,7 +456,7 @@ They tell the story of how we used Domain-Driven Design, Functional Programming,
 &lt;li&gt;Monolith to Microservices by &lt;em&gt;Sam Newman&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;Software Architecture: The Hard Parts by &lt;em&gt;Neal Ford et al&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I suppose that the one big surprise from someone who mainly travels the functional programming path, is a OOP book. However, GOOS, as it is commonly referred to, shaped how I approached writing code with regard to test-first and TDD.&lt;/p&gt;
+&lt;p&gt;I suppose that the one big surprise from someone who mainly travels the functional programming path, is an OOP book. However, GOOS, as it is commonly referred to, shaped how I approached writing code with regard to test-first and TDD.&lt;/p&gt;
 &lt;p&gt;The least surprising thing given the speed at which things go in and out of fashion, is that most of my chosen books are language agnostic.&lt;/p&gt;
 </content>
     </item>
