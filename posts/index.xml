@@ -440,9 +440,9 @@ They tell the story of how we used Domain-Driven Design, Functional Programming,
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ijrussell.github.io/posts/testing-csharp-with-fsharp/</guid>
-      <description>In modern .Net Solutions, projects using different languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.
+      <description>In modern .Net Solutions, projects using different languages can happily co-exist? This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.
 This will be the first post of many on .Net Interop. Anything that increases the use of F# has to be a good thing.</description>
-      <content>&lt;p&gt;In modern .Net Solutions, projects using different languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.&lt;/p&gt;
+      <content>&lt;p&gt;In modern .Net Solutions, projects using different languages can happily co-exist? This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.&lt;/p&gt;
 &lt;p&gt;This will be the first post of many on .Net Interop. Anything that increases the use of F# has to be a good thing.&lt;/p&gt;
 &lt;p&gt;If you&amp;rsquo;re interested in learning F#, download my free 200-page ebook &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;Essential F#&lt;/a&gt;. It&amp;rsquo;s designed to get C# devs up to speed in F# very quickly.&lt;/p&gt;
 &lt;p&gt;Now, back to the blog post. Let&amp;rsquo;s get started!&lt;/p&gt;
