@@ -435,14 +435,41 @@ They tell the story of how we used Domain-Driven Design, Functional Programming,
     </item>
     
     <item>
+      <title>My Favourite Development Books 2023</title>
+      <link>https://ijrussell.github.io/posts/top-10-books-2023/</link>
+      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ijrussell.github.io/posts/top-10-books-2023/</guid>
+      <description>I have read hundreds of books over the years and some of them have had a profound effect on me. In this post, I list my all-time favourite software development books. As you can imagine, this always proves to be a very difficult task; I could easily have tripled the size of the list this year, such has been the quality of recent publications, but keeping it small forces me to make hard decisions.</description>
+      <content>&lt;p&gt;I have read hundreds of books over the years and some of them have had a profound effect on me. In this post, I list my all-time favourite software development books. As you can imagine, this always proves to be a very difficult task; I could easily have tripled the size of the list this year, such has been the quality of recent publications, but keeping it small forces me to make hard decisions.&lt;/p&gt;
+&lt;p&gt;I read software development books to learn. I practice writing code to remember.&lt;/p&gt;
+&lt;p&gt;So, here it is - My 10 favourite development books 2023 (in alphabetical order):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Code That Fits In Your Head by &lt;em&gt;Mark Semmann&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Designing Data-Intensive Applications by &lt;em&gt;Martin Kleppmann&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Domain-Driven Design by &lt;em&gt;Eric Evans&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Domain Modelling Made Functional by &lt;em&gt;Scott Wlaschin&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Extreme Programming Explained by &lt;em&gt;Kent Beck&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Grokking Simplicity by &lt;em&gt;Eric Normand&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Growing Object Oriented Software, Guided by Tests by &lt;em&gt;Steve Freeman&lt;/em&gt; and &lt;em&gt;Nat Pryce&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Modern Software Engineering by &lt;em&gt;Dave Farley&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Monolith to Microservices by &lt;em&gt;Sam Newman&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Software Architecture: The Hard Parts by &lt;em&gt;Neal Ford et al&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I suppose that the one big surprise from someone who mainly travels the functional programming path, is a OOP book. However, GOOS, as it is commonly referred to, shaped how I approached writing code with regard to test-first and TDD.&lt;/p&gt;
+&lt;p&gt;The least surprising thing given the speed at which things go in and out of fashion, is that most of my chosen books are language agnostic.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
       <title>Testing C# with F#</title>
       <link>https://ijrussell.github.io/posts/testing-csharp-with-fsharp/</link>
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ijrussell.github.io/posts/testing-csharp-with-fsharp/</guid>
-      <description>In modern .Net Solutions, projects using different languages can happily co-exist? This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.
+      <description>In modern .Net Solutions, projects using different languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.
 This will be the first post of many on .Net Interop. Anything that increases the use of F# has to be a good thing.</description>
-      <content>&lt;p&gt;In modern .Net Solutions, projects using different languages can happily co-exist? This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.&lt;/p&gt;
+      <content>&lt;p&gt;In modern .Net Solutions, projects using different languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.&lt;/p&gt;
 &lt;p&gt;This will be the first post of many on .Net Interop. Anything that increases the use of F# has to be a good thing.&lt;/p&gt;
 &lt;p&gt;If you&amp;rsquo;re interested in learning F#, download my free 200-page ebook &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;Essential F#&lt;/a&gt;. It&amp;rsquo;s designed to get C# devs up to speed in F# very quickly.&lt;/p&gt;
 &lt;p&gt;Now, back to the blog post. Let&amp;rsquo;s get started!&lt;/p&gt;
