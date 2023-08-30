@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Testing C# with F# :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Did you know that in modern .Net Solutions, projects using different .Net languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or, as we do in this blog post, test C# code with F#." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/testing-csharp-with-fsharp/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Testing C# with F#">
+<meta property="og:description" content="Did you know that in modern .Net Solutions, projects using different .Net languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or, as we do in this blog post, test C# code with F#." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/testing-csharp-with-fsharp/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2023-08-30 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/testing-csharp-with-fsharp/">Testing C# with F#</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2023-08-30
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>In modern .Net Solutions, projects using different languages can happily co-exist. This means that you can use the best tool for the job such as F# for your domain logic and C# for your UI or as we do in this blog post, test C# code with F#.</p>
+<p>This will be the first post of many on .Net Interop. Anything that increases the use of F# has to be a good thing.</p>
+<p>If you&rsquo;re interested in learning F#, download my free 200-page ebook <a href="https://leanpub.com/essential-fsharp">Essential F#</a>. It&rsquo;s designed to get C# devs up to speed in F# very quickly.</p>
+<p>Now, back to the blog post. Let&rsquo;s get started!</p>
+<h2 id="creating-the-solution">Creating the Solution<a href="#creating-the-solution" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ol>
+<li>Create a new Library project, set the language to C#, and call it CSharpLibrary. Name the solution DotNetInterop.</li>
+<li>Create a new Test project, choose Xunit and F#, and call it FSharpTesting.</li>
+<li>Add a reference to CSharpLibrary project to the FSharpTesting project.</li>
+<li>Add the FsUnit.Xunit Nuget package to the test project.</li>
+<li>Build the solution.</li>
+</ol>
+<h2 id="writing-some-c">Writing some C#<a href="#writing-some-c" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Rename the created file RecentlyUsedList and add the following code to it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Immutable;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> CSharpLibrary;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RecentlyUsedList</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> List&lt;<span style="color:#66d9ef">string</span>&gt; _items;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> RecentlyUsedList(<span style="color:#66d9ef">int</span> capacity)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _items = <span style="color:#66d9ef">new</span> List&lt;<span style="color:#66d9ef">string</span>&gt;(capacity);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Add(<span style="color:#66d9ef">string</span> item)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _items.Remove(item);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_items.Count == _items.Capacity) { _items.RemoveAt(<span style="color:#ae81ff">0</span>); }
+</span></span><span style="display:flex;"><span>        _items.Add(item);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ImmutableList&lt;<span style="color:#66d9ef">string</span>&gt; Items =&gt; 
+</span></span><span style="display:flex;"><span>        _items.ToImmutableList().Reverse();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="first-f-test">First F# Test<a href="#first-f-test" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Replace the code in Tests.fs with the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> Tests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> CSharpLibrary
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> Xunit
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> FsUnit.Xunit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a new created recently used list`` <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``then the list contains no items`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should be Empty
+</span></span></code></pre></div><p>Notice that we don&rsquo;t need to new up an instance of a class in F#. We do use new for classes that implement the IDisposible interface.</p>
+<p>The biggest advantage of using F# for tests is the way that we can use modules for grouping tests and the use of the double backtick `` allows us to use proper sentences rather than odd casing or using seperators.</p>
+<p>Run the test. It should pass. If not, rebuild the solution and try again.</p>
+<h2 id="the-next-test">The Next Test<a href="#the-next-test" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Add the following below the existing test code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given an empty recently used list`` <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add one item then the list contains only that item`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Most C# collections are seen as a Sequence by F#. Sequence is equivalent to IEnumerable&lt;T&gt; in C#. Comparing Sequences can be done but when they are quite small, like the ones in our tests, we will convert them to F# Lists, where we can use structural equality.</p>
+<p>Run the tests and they should pass.</p>
+<h2 id="the-rest-of-the-tests">The Rest of the Tests<a href="#the-rest-of-the-tests" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The remainder of the tests follow the same pattern as the last test. Add this code under the existing tests.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a non-empty and non-capacity recently used list`` <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item not already in list then the item is added to the start of the list`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> expected <span style="color:#f92672">=</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> should equal expected
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item already in list then the item is moved to the start of the list`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> expected <span style="color:#f92672">=</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> should equal expected
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a recently used list that is at capacity`` <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> atCapacityList () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> rul <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        rul<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        rul<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        rul<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        rul
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item not in the list then the new item is added and the oldest item is dropped from the list`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> atCapacityList()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item4&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> expected <span style="color:#f92672">=</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item4&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> should equal expected
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item already in the list then the item is moved to the start of the list`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> atCapacityList()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> expected <span style="color:#f92672">=</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> should equal expected
+</span></span></code></pre></div><p>Run the tests and they should all pass.</p>
+<h2 id="summary">Summary<a href="#summary" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Using F# for your tests in .Net is a great way to improve the readability of your tests. You don&rsquo;t need to know much about F# to use it for some or all of your tests.</p>
+<p>In future posts, I&rsquo;ll endeavour to show much more interop, so that you can make an informed choice about which tools to use for each job.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://ijrussell.github.io/posts/introduction-to-tdd/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Introduction to TDD</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/retrospective-2022/">
+                <span class="button__text">Retrospective 2022</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
