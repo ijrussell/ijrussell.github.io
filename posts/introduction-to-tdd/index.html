@@ -156,8 +156,8 @@
   
 
   <div class="post-content"><div>
-        <p>In this post, we are going to do some Test-Driven Development (TDD) using F#, XUnit, and FsUnit. I find TDD very useful because the tests are the first user of my code, which means that if the tests are hard to write, then the code will be difficult to use. Many folks struggle with TDD, and unit testing in general, because they test the wrong thing. Your tests should only validate behaviour, not the implementation. This allows you to change the implementation of your code in a safe way. Not doing this makes your tests brittle and simple code changes often means broken and failing tests.</p>
-<p>TDD is not a silver bullet but when you&rsquo;ve finished, the tests will leave you with a codebase and test suite that gives you confidence that the code will work as intended in production and help you to support changes to the behaviour of the system in a safe and bug-free way.</p>
+        <p>In this post, we are going to do some Test-Driven Development (TDD). I find TDD very useful because the tests are the first user of my code, which means that if the tests are hard to write, then the code will be difficult to use. Many folks struggle with TDD, and unit testing in general, because they test the wrong things. Your tests should only validate behaviour, not the implementation. This allows you to change the implementation of your code in a safe way. Not doing this makes your tests brittle and simple code changes often means broken and failing tests.</p>
+<p>TDD is not a silver bullet but when you&rsquo;ve finished, the tests will leave you with a codebase and test suite that gives you confidence that the code will work as intended in production and help you to support changes to the implementation of the system in a safe and bug-free way.</p>
 <h3 id="creating-a-recently-used-list">Creating a Recently Used List<a href="#creating-a-recently-used-list" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>We are going to create a simple recently used list of strings. The first stage of TDD is to think about the problem. What behaviour should our list offer - In other words, how are we going to use it? The basic behaviour we require is:</p>
 <ul>
@@ -184,7 +184,7 @@
 </ul>
 </li>
 </ul>
-<p>I&rsquo;m going to rearrange the items into a different order, so that the tests are grouped by their initial state:</p>
+<p>I&rsquo;m going to rearrange the items into a different order, so that the tests are grouped by their initial state as this makes a more logical grouping for our tests:</p>
 <ul>
 <li>A new list is empty</li>
 <li>Given an empty list
@@ -242,7 +242,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``then it should contain no items`` () <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>capacity <span style="color:#f92672">=</span> 3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>capacity <span style="color:#f92672">=</span> 3uy<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        Assert.Equal<span style="color:#f92672">&lt;</span>List<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;(</span>[]<span style="color:#f92672">,</span> sut<span style="color:#f92672">.</span>Items<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p>If you&rsquo;re used to writing tests in C#, you may be surprised at the ability to group tests, using module, and at the use of real language rather than having to use special casing or seperators. Since C# and F# projects can co-exist in the same solution, C# code can be tested in F# test projects, so you don&rsquo;t have to miss out. Of course, it means that you have to learn some basic F#. But that&rsquo;s a good thing, isn&rsquo;t it?</p>
@@ -255,7 +255,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a newly created recently used list`` <span style="color:#f92672">=</span>
 </span></span></code></pre></div><p>Items is a readonly property that returns a list containing the capacity as a string.</p>
-<p>Run your tests. This test should fail because the tests expects an empty list and we have provided that.</p>
+<p>Run your tests. This test should fail because the test expects an empty list and we haven&rsquo;t provided that.</p>
 <blockquote>
 <p>You should always write a test that fails for an expected reason and then fix it.</p>
 </blockquote>
@@ -282,7 +282,7 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Assert.Equal&lt;List&lt;string&gt;&gt;([], sut.Items)
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal List.empty<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
 </span></span></code></pre></div><p>On the whole, F# does not support implicit conversions, so we must specify the type of the data, in this case the byte with <code>uy</code>.</p>
-<p>This is similar to libraries like FluentAssertions and, to my eyes, is a lot more readable than the original Xunit assertion.</p>
+<p>FsUnit is similar to libraries like FluentAssertions and, to my eyes, is a lot more readable than the original Xunit assertion.</p>
 <p>Run the tests and they should all pass.</p>
 <p>We can make it even simpler:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a newly created recently used list`` <span style="color:#f92672">=</span>
@@ -332,21 +332,21 @@
 </span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
 </span></span></code></pre></div><p>Run the tests and the latest only should fail because we are returning an empty list from the <code>RecentlyUsedList</code>. Even to do the simplest thing will involve a few lines of code.</p>
-<p>Firstly, we add a new member for adding an item to the list:</p>
+<p>Firstly, we add a new member function for adding an item to the list:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Add</span><span style="color:#f92672">(</span>item<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> items<span style="color:#f92672">.</span>Add item
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Items</span> <span style="color:#f92672">=</span> []
 </span></span></code></pre></div><p>Then we return the items from the internal list:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Add</span><span style="color:#f92672">(</span>item<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> items<span style="color:#f92672">.</span>Add item
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Items</span> <span style="color:#f92672">=</span> items <span style="color:#f92672">|&gt;</span> Seq.toList
 </span></span></code></pre></div><p>Run the tests and they should all pass. Success!</p>
 <h3 id="test-3---add-a-new-item-to-a-non-empty-list-not-at-capacity">Test 3 - Add a new item to a non-empty list, not at capacity<a href="#test-3---add-a-new-item-to-a-non-empty-list-not-at-capacity" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>Let&rsquo;s add our new test under the existing ones:</p>
+<p>Let&rsquo;s add a new module and test under the existing ones:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a non-empty recently used list that is not at capacity`` <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
@@ -359,14 +359,14 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
 </span></span></code></pre></div><p>Run the tests and this one should fail because the items are in the wrong order. Let&rsquo;s fix that:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Add</span><span style="color:#f92672">(</span>item<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> items<span style="color:#f92672">.</span>Add item
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Items</span> <span style="color:#f92672">=</span> items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> List.rev
 </span></span></code></pre></div><p>Run your tests and they should all pass.</p>
 <p>Now that the tests pass, let&rsquo;s do some refactoring to make the next features easier to implement. Move the Add functionality to a new internal function:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> add item <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>        items<span style="color:#f92672">.</span>Add item
 </span></span><span style="display:flex;"><span>        
@@ -374,7 +374,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Items</span> <span style="color:#f92672">=</span> items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> List.rev
 </span></span></code></pre></div><p>Run the tests and they should all pass.</p>
 <h3 id="test-4---add-an-item-already-in-the-list">Test 4 - Add an item already in the list<a href="#test-4---add-an-item-already-in-the-list" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>Add the following test under the existing ones:</p>
+<p>Add the following test under the existing ones in the same module as Test 3:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item already in list then the item is moved to the start of the list`` () <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>capacity <span style="color:#f92672">=</span> 3<span style="color:#f92672">)</span>
@@ -384,9 +384,9 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">]</span>
-</span></span></code></pre></div><p>Run the tests and this one will fail with too many items in the list. we can fix that by removing the item and then adding it again.</p>
+</span></span></code></pre></div><p>Run the tests and this one will fail with too many items in the list. We can fix that by removing the item and then adding it again.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> add item <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>        item <span style="color:#f92672">|&gt;</span> items<span style="color:#f92672">.</span>Remove <span style="color:#f92672">|&gt;</span> ignore
 </span></span><span style="display:flex;"><span>        items<span style="color:#f92672">.</span>Add item
@@ -396,7 +396,7 @@
 </span></span></code></pre></div><p>The ignore is there to remove a compiler warning as items.Remove returns a boolean which we are not interested in.</p>
 <p>Run the tests and they should all pass.</p>
 <h3 id="test-5---given-a-list-at-capacity-add-an-item-not-in-the-list">Test 5 - Given a list at capacity, add an item not in the list<a href="#test-5---given-a-list-at-capacity-add-an-item-not-in-the-list" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>As our tests pass, we can add another test. We have now reached the tests when the list is at capacity.</p>
+<p>As our tests pass, we can add another test. We have now reached the tests when the list is at capacity. Add the new module and test:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a recently used list that is at capacity`` <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
@@ -412,7 +412,7 @@
 </span></span></code></pre></div><p>Run the tests and this one will fail as it will contain too may items since capacity is only a starting point for the ResizeArray.</p>
 <p>Let&rsquo;s fix that by removing the first item from the list if the list is at capacity:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RecentlyUsedList</span><span style="color:#f92672">(</span>capacity<span style="color:#f92672">:</span>int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> items <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>capacity<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> add item <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>        items<span style="color:#f92672">.</span>Remove item <span style="color:#f92672">|&gt;</span> ignore
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> items<span style="color:#f92672">.</span>Count <span style="color:#f92672">=</span> items<span style="color:#f92672">.</span>Capacity <span style="color:#66d9ef">then</span> items<span style="color:#f92672">.</span>RemoveAt 0
@@ -432,7 +432,7 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
-</span></span></code></pre></div><p>Run the tests and they all pass. If you think about it, we are duplicating the Test 4 as we are moving an existing item to the top of the list. Normally, we would delete this test but I&rsquo;m going to keep it in for completeness.</p>
+</span></span></code></pre></div><p>Run the tests and they all pass. If you think about it, we are duplicating Test 4 as we are moving an existing item to the top of the list. Normally, we would delete this test but I&rsquo;m going to keep it in for completeness.</p>
 <p>As our tests pass, we can do a little refactoring to the last two tests to handle setting up the at capacity list.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a recently used list that is at capacity`` <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    
@@ -458,8 +458,8 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
-</span></span></code></pre></div><p>Run our tests and they shaould all pass.</p>
-<p>We have completed our task and this is what we end up with:Finally:</p>
+</span></span></code></pre></div><p>Run our tests and they should all pass.</p>
+<p>We have completed our task and this is what we have finally ended up with:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> RecentlyUsedListTests
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> Xunit
@@ -551,12 +551,13 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Item2&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item3&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Item1&#34;</span><span style="color:#f92672">]</span>
 </span></span></code></pre></div><p>It might seem like a lot of work but we have some code that we know is easy to use and that has behaviour that is thoroughly tested.</p>
 <h3 id="red-green-refactor">Red Green Refactor<a href="#red-green-refactor" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>If your tests are passing, you can write a new failing test (Red). You write enough code to get the tests to pass (Green). You can then refactor your code in small steps (Refactor). Your tests should still pass. If your tests do not pass, undo your changes back to the last time that they passed and try again.</p>
+<p>If your tests are passing, you can write a new failing test (Red). You write enough code to get the tests to pass (Green). You can then improve your code in small steps (Refactor). Your tests should still pass. If your tests do not pass, undo your changes back to the last time that they passed and try again.</p>
 <blockquote>
 <p>Never refactor when the tests are failing. Undo your changes and try again.</p>
 </blockquote>
 <h3 id="summary">Summary<a href="#summary" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>I hope that you found this post both useful and informative. TDD is not too difficult if you think about the behaviour you want to test and follow a few simple rules. The benefits that it provides far outway any potential initial time costs.</p>
+<p>I hope that you found this post both useful and informative. TDD is not too difficult if you think about the behaviour you want to test beforehand and follow a few simple rules. The benefits that it provides far outway any potential initial time costs.</p>
+<p>Getting good at TDD is a result of experience and practice. Your code can only improve by using more of it.</p>
 
       </div></div>
 
@@ -568,6 +569,13 @@
         <hr />
     </div>
     <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://ijrussell.github.io/posts/my-last-project/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Integrating With Over 300 GPS Providers</span>
+            </a>
+        </span>
         
         
         <span class="button next">
