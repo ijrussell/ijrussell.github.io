@@ -156,7 +156,7 @@
   
 
   <div class="post-content"><div>
-        <p>In this post, we are going to do some Test-Driven Development (TDD). I find TDD very useful because the tests are the first user of my code, which means that if the tests are hard to write, then the code will be difficult to use. Many folks struggle with TDD, and unit testing in general, because they test the wrong things. Your tests should only validate behaviour, not the implementation. This allows you to change the implementation of your code in a safe way. Not doing this makes your tests brittle and simple code changes often means broken and failing tests.</p>
+        <p>In this post, we are going to do some Test-Driven Development (TDD). I find TDD very useful because the tests are the first user of my code, which means that if the tests are hard to write, then the code will be difficult to use. Many folks struggle with TDD, and unit testing in general, because they test the wrong things. Your tests should only validate observable behaviour, not the implementation. This allows you to change the implementation of your code in a safe way. Not doing this makes your tests brittle and simple code changes often means broken and failing tests.</p>
 <p>TDD is not a silver bullet but when you&rsquo;ve finished, the tests will leave you with a codebase and test suite that gives you confidence that the code will work as intended in production and help you to support changes to the implementation of the system in a safe and bug-free way.</p>
 <h3 id="getting-to-know-the-problem">Getting to Know the Problem<a href="#getting-to-know-the-problem" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>The first stage of TDD is to think about the problem. What behaviour should we test? - In other words, how are we going to use the code we write?</p>
@@ -420,6 +420,30 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Add</span><span style="color:#f92672">(</span>item<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> add item
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Items</span> <span style="color:#f92672">=</span> items <span style="color:#f92672">|&gt;</span> Seq.toList <span style="color:#f92672">|&gt;</span> List.rev
 </span></span></code></pre></div><p>Run the tests and they should all pass.</p>
+<h3 id="test-structure">Test Structure<a href="#test-structure" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Something that I haven&rsquo;t mentioned so far is how I&rsquo;m structuring the code within each test. They follow a pattern called <code>Arrange-Act-Assert</code>. If I add the names to the relevant sections, you&rsquo;ll be able to see how this looks:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> ``Given a non-empty recently used list that is not at capacity`` <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ``when you add an item not already in list then the item is added to the start of the list`` () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Arrange
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> sut <span style="color:#f92672">=</span> RecentlyUsedList<span style="color:#f92672">(</span>capacity <span style="color:#f92672">=</span> 3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Blue&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Act
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        sut<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Green&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Assert
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Green&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Blue&#34;</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p><code>Arrange</code> sets up the test case. Arrange is the least interesting part of the test but can constitute most of the code in the test depending upon how difficult it is to get the code into the required initial state. If this gets too large or if you are repeating the same code in multiple tests, extract the code to a function that does it for you.</p>
+<p><code>Act</code> performs the behaviour that we are testing. This should be at most a single action.</p>
+<p><code>Assert</code> verifies that the result is as we expected. This doesn&rsquo;t mean that you should only have one assert statement per test but that the asserts should only verify the result of a single action.</p>
+<blockquote>
+<p>Do not write tests that verify multiple behaviours in one test because they are more likely to break over time as you add new functionality.</p>
+</blockquote>
+<p>It is a good habit to write the names of the sections out when you first start writing tests but once you&rsquo;re experienced, they provide less value.</p>
+<p>You may also sometimes see <code>Arrange-Act-Assert</code> described as equivalent to <code>Given-When-Then</code> but they were designed for different audiences. <code>Given-When-Then</code> started as a structure for building User Stories in Behaviour-Driven Design. You&rsquo;ll notice that the names of the modules and tests in this post follow the <code>Given-When-Then</code> naming style.</p>
+<p>Now we go back to testing behaviour.</p>
 <h3 id="test-4---add-an-item-already-in-the-list">Test 4 - Add an item already in the list<a href="#test-4---add-an-item-already-in-the-list" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>Add the following test under the existing ones in the same module as Test 3:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
@@ -598,9 +622,9 @@
 </span></span><span style="display:flex;"><span>        sut<span style="color:#f92672">.</span>Items <span style="color:#f92672">|&gt;</span> should equal <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;Green&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Red&#34;</span><span style="color:#f92672">;</span><span style="color:#e6db74">&#34;Blue&#34;</span><span style="color:#f92672">]</span>
 </span></span></code></pre></div><p>It might seem like a lot of work but we have some code that we know is easy to use and that has behaviour that is thoroughly tested.</p>
 <h3 id="red-green-refactor">Red Green Refactor<a href="#red-green-refactor" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>If your tests are passing, you can write a new failing test (Red). You write enough code to get the tests to pass (Green). You can then improve your code in small steps (Refactor). Your tests should still pass. If your tests do not pass, undo your changes back to the last time that they passed and try again.</p>
+<p>A simple phrase to help you remember the steps in TDD is <code>Red-Green-Refactor</code>. If your tests are passing, you can write a new failing test (Red). You write enough code to get all of the tests to pass (Green). You can then improve your code in small steps (Refactor). Your tests should still pass. If your tests do not pass, undo your changes back to the last time that they passed and try again.</p>
 <blockquote>
-<p>Never refactor when the tests are failing. Undo your changes and try again.</p>
+<p><strong>Never refactor when the tests are failing</strong>. Undo your changes and try again.</p>
 </blockquote>
 <h3 id="summary">Summary<a href="#summary" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>I hope that you found this post both useful and informative. TDD is not too difficult if you think about the behaviour you want to test beforehand and follow a few simple rules. The benefits that it provides far outway any potential initial time costs.</p>

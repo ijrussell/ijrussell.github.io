@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   
-    <title>Integrating With Over 300 GPS Providers :: ijrussell</title>
+    <title>Learning Gleam :: ijrussell</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Two of my ex-colleagues at Trustbit gave a presentation at the kanDDDinsky 2022 Conference in Berlin about a SaaS product we built that integrated with over 300 GPS Providers from across Europe to aggregate GPS data for a large European transport organisation." />
+<meta name="description" content="I&#39;ve been looking at options outside the .NET ecosystem and was considering Elixir but one of my friends suggested that I have a look at Gleam instead. In this post, I&#39;m going to outline my initial thoughts on the Gleam language." />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
-<link rel="canonical" href="https://ijrussell.github.io/posts/my-last-project/" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/learning-gleam-1/" />
 
 
 
@@ -40,9 +40,9 @@
 
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="Integrating With Over 300 GPS Providers">
-<meta property="og:description" content="Two of my ex-colleagues at Trustbit gave a presentation at the kanDDDinsky 2022 Conference in Berlin about a SaaS product we built that integrated with over 300 GPS Providers from across Europe to aggregate GPS data for a large European transport organisation." />
-<meta property="og:url" content="https://ijrussell.github.io/posts/my-last-project/" />
+<meta property="og:title" content="Learning Gleam">
+<meta property="og:description" content="I&#39;ve been looking at options outside the .NET ecosystem and was considering Elixir but one of my friends suggested that I have a look at Gleam instead. In this post, I&#39;m going to outline my initial thoughts on the Gleam language." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/learning-gleam-1/" />
 <meta property="og:site_name" content="ijrussell" />
 
   
@@ -53,7 +53,7 @@
 <meta property="og:image:height" content="1024">
 
 
-  <meta property="article:published_time" content="2023-08-30 00:00:00 &#43;0000 UTC" />
+  <meta property="article:published_time" content="2023-09-29 00:00:00 &#43;0000 UTC" />
 
 
 
@@ -135,11 +135,11 @@
     
 <div class="post">
   <h1 class="post-title">
-    <a href="https://ijrussell.github.io/posts/my-last-project/">Integrating With Over 300 GPS Providers</a></h1>
+    <a href="https://ijrussell.github.io/posts/learning-gleam-1/">Learning Gleam</a></h1>
   <div class="post-meta">
     
       <span class="post-date">
-        2023-08-30
+        2023-09-29
         
       </span>
     
@@ -156,10 +156,31 @@
   
 
   <div class="post-content"><div>
-        <p>Two of my ex-colleagues at Trustbit, Christian Folie and Daniel Weller, gave a presentation at the kanDDDinsky 2022 Conference in Berlin about a SaaS product we built that integrated with over 300 GPS Providers from across Europe to aggregate GPS data for a large European transport organisation. They tell the story of how we used Domain-Driven Design, Functional Programming in F#, and agile practices to help evolve the system over time, the mistakes we made along the way, and the lessons that we learned.</p>
-<p><a href="https://www.youtube.com/watch?v=MmruAS3B3D0">https://www.youtube.com/watch?v=MmruAS3B3D0</a></p>
-<p>The video is from the KanDDDinsky Conference 2022 in Berlin (Oct 31 to Nov 2, 2022).</p>
-
+        <p>I&rsquo;ve been looking at options outside the .NET universe and was considering Elixir but one of my friends suggested that I have a look at Gleam instead. It&rsquo;s strongly typed ML-style language for the Erlang/BEAM platform. Having a lot of experience in another ML language (F#), the syntax is really easy to pick up. You can learn more about Gleam <a href="https://gleam.run/">here</a>.</p>
+<h2 id="exercism">Exercism<a href="#exercism" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p><a href="https://exercism.org/tracks/gleam">Gleam track</a></p>
+<h2 id="secret-handshake">Secret Handshake<a href="#secret-handshake" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<pre tabindex="0"><code class="language-gleam" data-lang="gleam">pub type Command {
+  Wink
+  DoubleBlink
+  CloseYourEyes
+  Jump
+}
+</code></pre><pre tabindex="0"><code class="language-gleam" data-lang="gleam">pub fn commands(encoded_message: Int) -&gt; List(Command) {
+  let items = 
+    [#(0b1, Wink), #(0b10, DoubleBlink), #(0b100, CloseYourEyes), #(0b1000, Jump)]
+    |&gt; list.filter_map(fn(item) {
+      case int.bitwise_and(encoded_message, item.0) {
+          0 -&gt; Error(Nil)
+          _ -&gt; Ok(item.1)
+      }
+    })
+  case int.bitwise_and(encoded_message, 0b10000) {
+    0 -&gt; items
+    _ -&gt; list.reverse(items)
+  }
+}
+</code></pre>
       </div></div>
 
   
@@ -171,17 +192,10 @@
     </div>
     <div class="pagination__buttons">
         
-        <span class="button previous">
-            <a href="https://ijrussell.github.io/posts/csharp-discriminated-union/">
-                <span class="button__icon">←</span>
-                <span class="button__text">Discriminated Unions in C#</span>
-            </a>
-        </span>
-        
         
         <span class="button next">
-            <a href="https://ijrussell.github.io/posts/introduction-to-tdd/">
-                <span class="button__text">Introduction to TDD</span>
+            <a href="https://ijrussell.github.io/posts/my-last-project/">
+                <span class="button__text">Integrating With Over 300 GPS Providers</span>
                 <span class="button__icon">→</span>
             </a>
         </span>

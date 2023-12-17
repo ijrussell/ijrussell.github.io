@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Function Composition in F# :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Function Composition in F#" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/function-composition-effects/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Function Composition in F#">
+<meta property="og:description" content="Function Composition in F#" />
+<meta property="og:url" content="https://ijrussell.github.io/posts/function-composition-effects/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2023-09-05 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/function-composition-effects/">Function Composition in F#</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2023-09-05
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>).Dump(); <span style="color:#75715e">// 25</span>
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">0</span>).Dump(); <span style="color:#75715e">// DivideByZeroException</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Calculate(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; Divide(Multiply(Divide(x, y), x), y);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Multiply(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x * y;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Divide(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x / y;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>).Dump();
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">0</span>).Dump(); <span style="color:#75715e">// DivideByZeroException</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Calculate(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x.Divide(y).Multiply(x).Divide(y);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IntegerExtensions</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> Multiply(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x * y;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> Divide(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x / y;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>).Dump(); 
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">0</span>).Dump(); 
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Calculate(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x.Divide(y).Multiply(x).Divide(y); <span style="color:#75715e">// Compiler error </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IntegerExtensions</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> Multiply(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x * y;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int?</span> Divide(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; y != <span style="color:#ae81ff">0</span> ? x / y : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>No multiply for int?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>).Dump(); <span style="color:#75715e">// 25</span>
+</span></span><span style="display:flex;"><span>    Calculate(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">0</span>).Dump(); <span style="color:#75715e">// null</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int?</span> Calculate(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x.Divide(y).Multiply(x).Divide(y);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IntegerExtensions</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> Multiply(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x * y;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int?</span> Multiply(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int?</span> x, <span style="color:#66d9ef">int</span> y) =&gt; x * y;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int?</span> Divide(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y) =&gt; y != <span style="color:#ae81ff">0</span> ? x / y : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int?</span> Divide(<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">int?</span> x, <span style="color:#66d9ef">int</span> y) =&gt; y != <span style="color:#ae81ff">0</span> ? x / y : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Like async-await -&gt; japanese knotweed</p>
+<h2 id="the-f-way">The F# Way<a href="#the-f-way" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Add a new file above Program.fs called OptionDemo.fs. In the new file, create the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> ComputationExpression
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> OptionDemo <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> multiply x y <span style="color:#f92672">=</span> <span style="color:#75715e">// int -&gt; int -&gt; int
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        x <span style="color:#f92672">*</span> y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> divide x y <span style="color:#f92672">=</span> <span style="color:#75715e">// int -&gt; int -&gt; int option
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> y <span style="color:#f92672">=</span> 0 <span style="color:#66d9ef">then</span> None
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> Some <span style="color:#f92672">(</span>x <span style="color:#f92672">/</span> y<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// The formula is: f x y = ((x / y) * x) / y
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        divide x y
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> r1 <span style="color:#f92672">-&gt;</span> multiply r1 x <span style="color:#75715e">// compiler error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> r2 <span style="color:#f92672">-&gt;</span> divide r2 y
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span> divide <span style="color:#f92672">(</span>multiply <span style="color:#f92672">(</span>divide x y<span style="color:#f92672">)</span> x<span style="color:#f92672">)</span> y
+</span></span></code></pre></div><p>We have two simple functions, multiply and divide, one of which returns an Option, and we are using them to compose a function called calculate. Don&rsquo;t worry about what the functions are doing, we are only interested in the effect, in this case, Option.</p>
+<p>Because the order of the input parameters is not ideal for forward-piping, we have used anonymous functions to get access to the data passed down.</p>
+<p>This function does not compile due to the divide function returning an Option. Let&rsquo;s expand out the function using the match expression to make the function compile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    divide x y
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> result <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> result <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Some v <span style="color:#f92672">-&gt;</span> multiply v x <span style="color:#f92672">|&gt;</span> Some
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> result <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> result <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Some t <span style="color:#f92672">-&gt;</span> divide t y
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span></code></pre></div><p>This function is much larger with all of the pattern matching but it does make it explicitly clear what the function does and shows that there is no early return.</p>
+<p>Think about what happens in the cases where y = 0 and y = 1. In the first case, the multiply and the second divide function will not be called because the code is on the None track.</p>
+<p>The expanded match expressions follow patterns that are well known to us, which means that we can use Option.map and Option.bind to simplify the function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    divide x y
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> v <span style="color:#f92672">-&gt;</span> multiply v x<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.bind <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> t <span style="color:#f92672">-&gt;</span> divide t y<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>We use map when the function we are applying it to does not generate the effect, in this case, Option, when executed and bind when the function does apply the effect as divide does.</p>
+<p>This is much nicer but this is a chapter about computation expressions and how they can simplify coding with effects like Option, so let&rsquo;s move on.</p>
+<p>Whilst there are some computation expressions built into the core F# language, there isn&rsquo;t one for Option, so we are going to create a basic computation expression ourselves.</p>
+<p>Create the following code between the namespace and the module declaration in OptionDemo.fs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#f92672">[&lt;</span>AutoOpen<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> Option <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">OptionBuilder</span>() <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Supports let!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Bind</span><span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> f<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> Option.bind f x
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Supports return
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">Return</span><span style="color:#f92672">(</span>x<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> Some x
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Supports return!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">ReturnFrom</span><span style="color:#f92672">(</span>x<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Computation Expression for Option 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Usage will be option {...}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> option <span style="color:#f92672">=</span> OptionBuilder()
+</span></span></code></pre></div><p>The <code>[&lt;AutoOpen&gt;]</code> attribute means that when the namespace is referenced, we automatically get access to the types and functions in the module.</p>
+<p>This is a very simple computation expression but is enough for our needs. At this stage, it&rsquo;s not important to fully understand how this works but you can see that we define a class type with some required member functions and then create an instance of that type for use in our code.</p>
+<p>Comment out the calculate function and create the following that uses our new option computation expression:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// let calculate x y =
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//     divide x y
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//     |&gt; Option.map (fun v -&gt; multiply v x)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//     |&gt; Option.bind (fun t -&gt; divide t y)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    option <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let!</span> v <span style="color:#f92672">=</span> divide x y
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> t <span style="color:#f92672">=</span> multiply v x
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let!</span> r <span style="color:#f92672">=</span> divide t y
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> r
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>The code does exactly the same as the commented-out version but it hides the None track from the user, allowing you to concentrate on the happy path.</p>
+<p>The bang (!) unwraps the effect using the Bind function, in this case, the Option, for the happy path. If you look at the OptionBuilder code, return does the opposite and applies the effect to the data.</p>
+<p>If you hover your mouse over the first value, it tells you that it is an int value because the bang (!) has unwrapped the Option for us. Delete the bang and hover over the first value again. You&rsquo;ll see that it is now an option<!-- raw HTML omitted -->, so it hasn&rsquo;t been unwrapped. You will also get an error from the compiler. Put the bang back.</p>
+<p>The nice thing about this function is that we don&rsquo;t need to know about Option.bind or Option.map; It&rsquo;s nearly all hidden away from us, so we can concentrate on providing the functionality.</p>
+<p>The bindings with the let! get processed by the Bind function in the computation expression. Let bindings that would have used Option.map are automatically handled by the underlying computation expression code. The return matches the Return function in the computation expression. If we want to use the ReturnFrom function, we do the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calculate x y <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    option <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let!</span> v <span style="color:#f92672">=</span> divide x y
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> t <span style="color:#f92672">=</span> multiply v x
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span><span style="color:#f92672">!</span> divide t y
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Notice the bang (!) on the return. If you look at the OptionBuilder code, you will notice that this does nothing to the output which is correct because the divide function already applies the effect.</p>
+<p>To test the code, replace the code in Program.fs with the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> ComputationExpression.OptionDemo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>calculate 10 0 <span style="color:#f92672">|&gt;</span> printfn <span style="color:#e6db74">&#34;calculate 8 0 = %A&#34;</span> <span style="color:#75715e">// None
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>calculate 10 2 <span style="color:#f92672">|&gt;</span> printfn <span style="color:#e6db74">&#34;calculate 8 2 = %A&#34;</span> <span style="color:#75715e">// Some 25
+</span></span></span></code></pre></div><p>Now type dotnet run in the Terminal. You should get None and Some 16 as the output in the terminal window.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/my-last-project/">
+                <span class="button__text">Integrating With Over 300 GPS Providers</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

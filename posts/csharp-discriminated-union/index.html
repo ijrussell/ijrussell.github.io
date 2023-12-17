@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Discriminated Unions in C# :: ijrussell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This blog post is a very gentle introduction to how you can simulate Discriminated Unions today in C# whilst you wait for them to be added to the C# Language. We&#39;ll look at one of the less popular reasons for wanting their introduction: Domain Modelling." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ijrussell.github.io/posts/csharp-discriminated-union/" />
+
+
+
+
+<link rel="stylesheet" href="https://ijrussell.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://ijrussell.github.io/assets/green.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://ijrussell.github.io/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://ijrussell.github.io/img/favicon/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="ijrussell" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Discriminated Unions in C#">
+<meta property="og:description" content="This blog post is a very gentle introduction to how you can simulate Discriminated Unions today in C# whilst you wait for them to be added to the C# Language. We&#39;ll look at one of the less popular reasons for wanting their introduction: Domain Modelling." />
+<meta property="og:url" content="https://ijrussell.github.io/posts/csharp-discriminated-union/" />
+<meta property="og:site_name" content="ijrussell" />
+
+  
+    <meta property="og:image" content="https://ijrussell.github.io/img/favicon/green.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2023-12-17 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ijrussell
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Blog</a></li>
+        
+      
+        
+          <li><a href="/book">Book</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Blog</a></li>
+      
+    
+      
+        <li><a href="/book">Book</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://ijrussell.github.io/posts/csharp-discriminated-union/">Discriminated Unions in C#</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2023-12-17
+        
+      </span>
+    
+    
+      <span class="post-author">:: ijrussell</span>
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Native Discriminated Unions in C# are a hot-topic for many in the Community. They have been a core F# feature from version 1.0 in 2005 and are used for many things in F# codebases including:</p>
+<ul>
+<li>Handling Nulls and Missing Values</li>
+<li>Handling Business Errors</li>
+<li>Domain Modelling</li>
+</ul>
+<p>There was a discussion document released earlier this year by the C# Language Team about some of the possible options for making Discriminated Unions a C# feature in an upcoming release of the language. A video about their discussions can be viewed here:</p>
+<p><a href="https://www.youtube.com/watch?v=IsFxVLUty1M">Languages &amp; Runtime Community Standup - Considering discriminated unions</a></p>
+<p>So, folks want them and Microsoft is discussing how to add them to C# but what are they?</p>
+<blockquote>
+<p>Discriminated Unions are:</p>
+<ul>
+<li>Types where instances represent a single case from a closed set of possible cases.</li>
+<li>Each case may carry along additional data.</li>
+</ul>
+</blockquote>
+<p>To illustrate the concept more clearly, we&rsquo;ll look at some simple examples in F#. Don&rsquo;t worry, the examples are very simple.</p>
+<p>A boolean can either be true or false. We could define it as a Discriminated Union like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Boolean</span> <span style="color:#f92672">=</span> True <span style="color:#f92672">|</span> False
+</span></span></code></pre></div><p>The Boolean type cases can also be written on multiple lines, like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Boolean</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> True
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> False
+</span></span></code></pre></div><p>To use the Boolean type, we would do the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> iamTrue <span style="color:#f92672">=</span> True <span style="color:#75715e">// Boolean
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> iamFalse <span style="color:#f92672">=</span> False <span style="color:#75715e">// Boolean
+</span></span></span></code></pre></div><p>It&rsquo;s important to note that True and False are not types in their own right - They are cases of Boolean, with no additional data attached.</p>
+<p>How would you define a type in C# that expresses a filter for a query where it can represent an Id of Guid, a Name of string, or an Email of string? Discriminated Unions support that:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserKey</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Id <span style="color:#66d9ef">of</span> Guid
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Name <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Email <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span></code></pre></div><p>Each UserKey case has an identifier and some data attached to it.</p>
+<p>To create an instance of a <code>UserKey</code>, we can do this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> nameKey <span style="color:#f92672">=</span> Name <span style="color:#e6db74">&#34;Fred&#34;</span> <span style="color:#75715e">// UserKey
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> emailKey <span style="color:#f92672">=</span> Email <span style="color:#e6db74">&#34;ian@fsharpisawesome.universe&#34;</span> <span style="color:#75715e">// UserKey
+</span></span></span></code></pre></div><p>You can think of the case identifier as a constructor but you must remember that it creates the containing type, not an instance of the case.</p>
+<p>To use the Discriminated Union, we pass around an instance of the type and use Pattern Matching to determine the case and its data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// UserKey -&gt; option&lt;User&gt; [Equivalent to Func&lt;UserKey, User?&gt; in C#]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> tryFindUser<span style="color:#f92672">(</span>key<span style="color:#f92672">:</span>UserKey<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> User option <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> key <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Id id <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Name name <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">...</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Email email <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">...</span>
+</span></span></code></pre></div><p>An F# match expression is very similar to a C# switch expression, except that Discriminated Unions in F# are a closed set, so the compiler knows when all cases have been covered and warns you if they have not.</p>
+<p>There are a couple of built-in Discriminated Unions in the F# Language for Optional values, which we use instead of nullable types, and Results to support happy and unhappy paths instead of handling business errors using Exceptions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// In FSharp.Core
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Option</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">&#39;</span>T
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// In FSharp.Core
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Result</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>TSuccess<span style="color:#f92672">,</span> <span style="color:#66d9ef">&#39;</span>TFailure<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Ok <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">&#39;</span>TSuccess
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Error <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">&#39;</span>TFailure
+</span></span></code></pre></div><p>If you&rsquo;re interested in some C# implementations of Option and Result, watch the following videos:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=gpOQl2q0PTU">Zoran Horvat - Build Your Own Option Type in C# and Use It Like a Pro</a></li>
+<li><a href="https://www.youtube.com/watch?v=YbuSuSpzee4">Nick Chapsas - What&rsquo;s the Result Type Everyone Is Using in .NET?</a></li>
+</ul>
+<p>Now that we have an understanding of what a Discriminated Unions is, let&rsquo;s introduce a scenario to implement that could benefit from using them in C#.</p>
+<h3 id="the-scenario">The Scenario<a href="#the-scenario" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We will look at how to model applying a discount to an order for some customers. This is the feature:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>Feature: Applying a discount
+</span></span><span style="display:flex;"><span>Scenario: Eligible Registered Customers get 10% discount when they spend £100 or more
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Given the following Registered Customers
+</span></span><span style="display:flex;"><span>|Customer Id|Is Eligible|
+</span></span><span style="display:flex;"><span>|John       |true       |
+</span></span><span style="display:flex;"><span>|Mary       |true       |
+</span></span><span style="display:flex;"><span>|Richard    |false      |
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>When [Customer Id] spends [Spend]
+</span></span><span style="display:flex;"><span>Then their order total after applying [Discount] will be [Total]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>No Discount Applied Examples:
+</span></span><span style="display:flex;"><span>|Customer Id|   Spend|   Total|Reason        |
+</span></span><span style="display:flex;"><span>|Mary       |   99.00|   99.00|Spend too low |
+</span></span><span style="display:flex;"><span>|Richard    |  100.00|  100.00|Not Eligible  |
+</span></span><span style="display:flex;"><span>|Sarah      |  100.00|  100.00|Not Registered|
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Discount Applied Examples:
+</span></span><span style="display:flex;"><span>|Customer Id|   Spend|   Total|
+</span></span><span style="display:flex;"><span>|John       |  100.00|   90.00|
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Notes:
+</span></span><span style="display:flex;"><span>Only Registered Customers can be Eligible
+</span></span></code></pre></div><p>In the following code examples, we are going to concentrate on the types of customer - <code>Eligible</code>, <code>Registered</code>, <code>Unregistered</code> - that we need to model.</p>
+<h3 id="getting-started">Getting Started<a href="#getting-started" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>All of the code examples were written in LINQPad 8. You can copy the code and run them as C# Programs.</p>
+<h4 id="example-1---using-a-simple-record-type">Example 1 - Using a Simple Record Type<a href="#example-1---using-a-simple-record-type" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
+<p>We are going to start by creating a simple record for the <code>Customer</code> which will have three properties: <code>Id</code>, <code>IsRegistered</code>, and <code>IsEligible</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Customer john = <span style="color:#66d9ef">new</span> Customer(<span style="color:#e6db74">&#34;John&#34;</span>, <span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer mary = <span style="color:#66d9ef">new</span> Customer(<span style="color:#e6db74">&#34;Mary&#34;</span>, <span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer richard = <span style="color:#66d9ef">new</span> Customer(<span style="color:#e6db74">&#34;Richard&#34;</span>, <span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>    Customer sarah = <span style="color:#66d9ef">new</span> Customer(<span style="color:#e6db74">&#34;Sarah&#34;</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (CalculateTotal(john, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">90</span>m).Dump(<span style="color:#e6db74">&#34;john&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(mary, <span style="color:#ae81ff">99</span>m) == <span style="color:#ae81ff">99</span>m).Dump(<span style="color:#e6db74">&#34;mary&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(richard, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;richard&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(sarah, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You can define other methods, fields, classes and namespaces here</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Customer</span>(<span style="color:#66d9ef">string</span> Id, <span style="color:#66d9ef">bool</span> IsRegistered, <span style="color:#66d9ef">bool</span> IsEligible);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">decimal</span> CalculateTotal(Customer customer, <span style="color:#66d9ef">decimal</span> spend)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> discount = customer.IsRegistered &amp;&amp; customer.IsEligible &amp;&amp; spend &gt;= <span style="color:#ae81ff">100</span>m ? spend * <span style="color:#ae81ff">0.1</span>m : <span style="color:#ae81ff">0</span>m;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> spend - discount;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This works fine and you&rsquo;ll see examples similar to this in most C# codebases. I see two problems with this simple example:</p>
+<ul>
+<li>It is possible to create a <code>Customer</code> in an invalid state.</li>
+<li>It has implicit domain knowledge wrapped up in two boolean properties.</li>
+</ul>
+<p>To create an invalid <code>Customer</code>, we can do this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>Customer invalidCustomer = <span style="color:#66d9ef">new</span> Customer(<span style="color:#e6db74">&#34;BadIan&#34;</span>, IsRegistered: <span style="color:#66d9ef">false</span>, IsEligible: <span style="color:#66d9ef">true</span>);
+</span></span></code></pre></div><p>To solve this issue, we could add a private constructor and use Smart Constructors to allow only the creation of valid Customers but it doesn&rsquo;t solve the implicit knowledge problem. It requires intimate knowledge of the <code>Customer</code> type to determine what it means to be an <code>Eligible Customer</code>.</p>
+<h4 id="example-2---using-inheritance-with-type-test-and-set">Example 2 - Using Inheritance with Type Test and Set<a href="#example-2---using-inheritance-with-type-test-and-set" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
+<p>The first improvement we are going to make is to convert the Customer into an empty abstract record and add derived classes for <code>Registered</code> and <code>Guest</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Customer john = <span style="color:#66d9ef">new</span> Registered(<span style="color:#e6db74">&#34;John&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer mary = <span style="color:#66d9ef">new</span> Registered(<span style="color:#e6db74">&#34;Mary&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer richard = <span style="color:#66d9ef">new</span> Registered(<span style="color:#e6db74">&#34;Richard&#34;</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>    Customer sarah = <span style="color:#66d9ef">new</span> Guest(<span style="color:#e6db74">&#34;Sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (CalculateTotal(john, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">90</span>m).Dump(<span style="color:#e6db74">&#34;john&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(mary, <span style="color:#ae81ff">99</span>m) == <span style="color:#ae81ff">99</span>m).Dump(<span style="color:#e6db74">&#34;mary&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(richard, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;richard&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(sarah, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You can define other methods, fields, classes and namespaces here</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Customer</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Registered</span>(<span style="color:#66d9ef">string</span> Id, <span style="color:#66d9ef">bool</span> IsEligible) : Customer;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Guest</span>(<span style="color:#66d9ef">string</span> Name) : Customer;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">decimal</span> CalculateTotal(Customer customer, <span style="color:#66d9ef">decimal</span> spend)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> discount = customer <span style="color:#66d9ef">switch</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Registered c when c.IsEligible &amp;&amp; spend &gt;= <span style="color:#ae81ff">100</span>m =&gt; spend * <span style="color:#ae81ff">0.1</span>m,
+</span></span><span style="display:flex;"><span>        Registered _ =&gt; <span style="color:#ae81ff">0</span>m,
+</span></span><span style="display:flex;"><span>        Guest _ =&gt; <span style="color:#ae81ff">0</span>m,
+</span></span><span style="display:flex;"><span>        _ =&gt; <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> InvalidOperationException()
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> spend - discount;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The key takeaway from this example is that we always create a Customer against the base type, even though we are not sharing any behaviour. We are using inheritance because it is the only mechanism to build these structures available to us in C#.</p>
+<p>We use Type Test and Set in the Pattern Match to help determine the discount to apply to the order for the specific customer passed into the CalculateTotal function. I know that some folks won&rsquo;t like this as it breaks OOP and SOLID but this is what Type Test and Set was added for.</p>
+<p>This set of records is our first simulated Discriminated Union. It isn&rsquo;t a closed set, so I can add a new derived record anywhere in the codebase if I wanted to. Notice also that the switch expression requires a wildcard as the compiler has no concept of what a closed set is.</p>
+<h4 id="example-3---preventing-rogue-derived-classes">Example 3 - Preventing Rogue Derived Classes<a href="#example-3---preventing-rogue-derived-classes" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
+<p>In this iteration, we will try to prevent folks adding new derived records without us being aware.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Customer john = <span style="color:#66d9ef">new</span> Customer.Registered(<span style="color:#e6db74">&#34;John&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer mary = <span style="color:#66d9ef">new</span> Customer.Registered(<span style="color:#e6db74">&#34;Mary&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    Customer richard = <span style="color:#66d9ef">new</span> Customer.Registered(<span style="color:#e6db74">&#34;Richard&#34;</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>    Customer sarah = <span style="color:#66d9ef">new</span> Customer.Guest(<span style="color:#e6db74">&#34;Sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (CalculateTotal(john, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">90</span>m).Dump(<span style="color:#e6db74">&#34;john&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(mary, <span style="color:#ae81ff">99</span>m) == <span style="color:#ae81ff">99</span>m).Dump(<span style="color:#e6db74">&#34;mary&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(richard, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;richard&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(sarah, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Customer</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Customer() {}
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Registered</span>(<span style="color:#66d9ef">string</span> Id, <span style="color:#66d9ef">bool</span> IsEligible) : Customer;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Guest</span>(<span style="color:#66d9ef">string</span> Id) : Customer;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">decimal</span> CalculateTotal(Customer customer, <span style="color:#66d9ef">decimal</span> spend)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> discount = customer <span style="color:#66d9ef">switch</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Customer.Registered c when c.IsEligible &amp;&amp; spend &gt;= <span style="color:#ae81ff">100</span>m =&gt; spend * <span style="color:#ae81ff">0.1</span>m,
+</span></span><span style="display:flex;"><span>        Customer.Registered _ =&gt; <span style="color:#ae81ff">0</span>m,
+</span></span><span style="display:flex;"><span>        Customer.Guest _ =&gt; <span style="color:#ae81ff">0</span>m,
+</span></span><span style="display:flex;"><span>        _ =&gt; <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> InvalidOperationException()
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> spend - discount;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Adding the scoping and the private constructor prevents anyone from creating a new derived record outside the <code>Customer</code> scope.</p>
+<h4 id="example-4---adding-an-eligible-class">Example 4 - Adding an Eligible Class<a href="#example-4---adding-an-eligible-class" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
+<p>The final iteration will be to add an explicit record for <code>Eligible</code> customers.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Customer john = <span style="color:#66d9ef">new</span> Customer.Eligible(<span style="color:#e6db74">&#34;John&#34;</span>);
+</span></span><span style="display:flex;"><span>    Customer mary = <span style="color:#66d9ef">new</span> Customer.Eligible(<span style="color:#e6db74">&#34;Mary&#34;</span>);
+</span></span><span style="display:flex;"><span>    Customer richard = <span style="color:#66d9ef">new</span> Customer.Registered(<span style="color:#e6db74">&#34;Richard&#34;</span>);
+</span></span><span style="display:flex;"><span>    Customer sarah = <span style="color:#66d9ef">new</span> Customer.Guest(<span style="color:#e6db74">&#34;Sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (CalculateTotal(john, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">90</span>m).Dump(<span style="color:#e6db74">&#34;john&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(mary, <span style="color:#ae81ff">99</span>m) == <span style="color:#ae81ff">99</span>m).Dump(<span style="color:#e6db74">&#34;mary&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(richard, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;richard&#34;</span>);
+</span></span><span style="display:flex;"><span>    (CalculateTotal(sarah, <span style="color:#ae81ff">100</span>m) == <span style="color:#ae81ff">100</span>m).Dump(<span style="color:#e6db74">&#34;sarah&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You can define other methods, fields, classes and namespaces here</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Customer</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Customer() {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Eligible</span>(<span style="color:#66d9ef">string</span> Id) : Customer;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Registered</span>(<span style="color:#66d9ef">string</span> Id) : Customer;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">record</span> <span style="color:#a6e22e">Guest</span>(<span style="color:#66d9ef">string</span> Id) : Customer;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">decimal</span> CalculateTotal(Customer customer, <span style="color:#66d9ef">decimal</span> spend)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> discount = customer <span style="color:#66d9ef">switch</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Customer.Eligible c when spend &gt;= <span style="color:#ae81ff">100</span>m =&gt; spend * <span style="color:#ae81ff">0.1</span>m,
+</span></span><span style="display:flex;"><span>        _ =&gt; <span style="color:#ae81ff">0</span>m
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> spend - discount;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This has simplified the logic inside the CalculateTotal function.</p>
+<h3 id="conclusions">Conclusions<a href="#conclusions" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>As you have seen, it is possible to simulate Discriminated Unions in C# and to gain some of their benefits. None of the examples is perfect but I think that they are perfectly useable. The key benefit of taking this approach in domain modelling is to:</p>
+<blockquote>
+<p>Make implicit domain knowledge explicit.</p>
+</blockquote>
+<p>Making specific types for different parts of your system is really easy. You don&rsquo;t need to rely on one big Entity with hidden domain knowledge inside.</p>
+<p>Microsoft are actively discussing introducing Discriminated Unions for C# at some point in the (near) future. It is likely that their only viable solution will be to add further syntactic sugar like they did for records, so converting from the examples in this post should be relatively simple.</p>
+<h3 id="what-about-f">What About F#?<a href="#what-about-f" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>F# has extensive built-in support for Discriminated Unions, so this sort of domain modelling is trivial:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RegisteredCustomer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> Id<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnregisteredCustomer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> Name<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Spend</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">decimal</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Total</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">decimal</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Customer</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Eligible <span style="color:#66d9ef">of</span> RegisteredCustomer
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Registered <span style="color:#66d9ef">of</span> RegisteredCustomer
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Guest <span style="color:#66d9ef">of</span> UnregisteredCustomer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Func&lt;Customer, Spend, Total&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> calculateTotal<span style="color:#f92672">(</span>customer<span style="color:#f92672">:</span>Customer<span style="color:#f92672">,</span> spend<span style="color:#f92672">:</span>Spend<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> Total <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> discount <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> customer <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Eligible <span style="color:#f92672">_</span> <span style="color:#66d9ef">when</span> spend <span style="color:#f92672">&gt;=</span> 100<span style="color:#f92672">.</span>0M <span style="color:#f92672">-&gt;</span> spend <span style="color:#f92672">*</span> 0<span style="color:#f92672">.</span>1M
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> 0<span style="color:#f92672">.</span>0M
+</span></span><span style="display:flex;"><span>    spend <span style="color:#f92672">-</span> discount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> john <span style="color:#f92672">=</span> Eligible <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;John&#34;</span> <span style="color:#f92672">}</span> <span style="color:#75715e">// Customer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> mary <span style="color:#f92672">=</span> Eligible <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Mary&#34;</span> <span style="color:#f92672">}</span> <span style="color:#75715e">// Customer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> richard <span style="color:#f92672">=</span> Registered <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Richard&#34;</span> <span style="color:#f92672">}</span> <span style="color:#75715e">// Customer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> sarah <span style="color:#f92672">=</span> Guest <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Sarah&#34;</span> <span style="color:#f92672">}</span> <span style="color:#75715e">// Customer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>calculateTotal<span style="color:#f92672">(</span>john<span style="color:#f92672">,</span> 100<span style="color:#f92672">.</span>0M<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 90<span style="color:#f92672">.</span>0M<span style="color:#f92672">).</span>Dump<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;john&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>calculateTotal<span style="color:#f92672">(</span>mary<span style="color:#f92672">,</span> 99<span style="color:#f92672">.</span>0M<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 99<span style="color:#f92672">.</span>0M<span style="color:#f92672">).</span>Dump<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mary&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>calculateTotal<span style="color:#f92672">(</span>richard<span style="color:#f92672">,</span> 100<span style="color:#f92672">.</span>0M<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 100<span style="color:#f92672">.</span>0M<span style="color:#f92672">).</span>Dump<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;richard&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>calculateTotal<span style="color:#f92672">(</span>sarah<span style="color:#f92672">,</span> 100<span style="color:#f92672">.</span>0M<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 100<span style="color:#f92672">.</span>0M<span style="color:#f92672">).</span>Dump<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sarah&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>This only shows a tiny fraction of the power of F#, Discriminated Unions, and Pattern Matching. They are used extensively in most F# codebases, especially the Line of Business applications/services that most of us write every day.</p>
+<p>If you want to learn more about using F# to create succinct, robust, and performant code, download my free 200-page ebook: <a href="https://leanpub.com/essential-fsharp">Essential F#</a>. It&rsquo;s full of practical examples like the scenario in this post and is designed to get folks up-and-running in functional-first programming in F# very quickly.</p>
+<blockquote>
+<p><strong>WARNING</strong>: Learning F# may lead you to think less favourably of C# than you currently do.</p>
+</blockquote>
+<h3 id="summary">Summary<a href="#summary" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>In this post, you have discovered what Discriminated Unions are, what is and isn&rsquo;t currently possible when implementing them in C# 12, and more importantly, why you might want to consider using the general concept in your codebases to help make implicit domain knowledge explicit.</p>
+<p>If you want to learn more about Functional Programing with C#, Simon J. Painter&rsquo;s <a href="https://www.oreilly.com/library/view/functional-programming-with/9781492097068/">book</a> is a great place to start.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://ijrussell.github.io/posts/my-last-project/">
+                <span class="button__text">Integrating With Over 300 GPS Providers</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://ijrussell.github.io/assets/main.js"></script>
+<script src="https://ijrussell.github.io/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
