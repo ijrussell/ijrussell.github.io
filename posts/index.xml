@@ -13,9 +13,13 @@
       <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ijrussell.github.io/posts/csharp-discriminated-union/</guid>
-      <description>Native Discriminated Unions in C# are a hot-topic for many in the Community. They have been a core F# feature from version 1.0 in 2005 and are used for many things in F# codebases including:
+      <description>This post was part of C# Advent Calendar 2023 run by @mgroves.
+Native Discriminated Unions in C# are a hot-topic for many in the Community. They have been a core F# feature from version 1.0 in 2005 and are used for many things in F# codebases including:
 Handling Nulls and Missing Values Handling Business Errors Domain Modelling There was a discussion document released earlier this year by the C# Language Team about some of the possible options for making Discriminated Unions a C# feature in an upcoming release of the language.</description>
-      <content>&lt;p&gt;Native Discriminated Unions in C# are a hot-topic for many in the Community. They have been a core F# feature from version 1.0 in 2005 and are used for many things in F# codebases including:&lt;/p&gt;
+      <content>&lt;blockquote&gt;
+&lt;p&gt;This post was part of &lt;a href=&#34;https://csadvent.christmas/&#34;&gt;C# Advent Calendar 2023&lt;/a&gt; run by &lt;a href=&#34;https://x.com/mgroves&#34;&gt;@mgroves&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Native Discriminated Unions in C# are a hot-topic for many in the Community. They have been a core F# feature from version 1.0 in 2005 and are used for many things in F# codebases including:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Handling Nulls and Missing Values&lt;/li&gt;
 &lt;li&gt;Handling Business Errors&lt;/li&gt;
@@ -285,7 +289,7 @@ Handling Nulls and Missing Values Handling Business Errors Domain Modelling Ther
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;summary&#34;&gt;Summary&lt;/h3&gt;
 &lt;p&gt;In this post, you have discovered what Discriminated Unions are, what is and isn&amp;rsquo;t currently possible when implementing them in C# 12, and more importantly, why you might want to consider using the general concept in your codebases to help make implicit domain knowledge explicit.&lt;/p&gt;
-&lt;p&gt;If you want to learn more about Functional Programing with C#, Simon J. Painter&amp;rsquo;s &lt;a href=&#34;https://www.oreilly.com/library/view/functional-programming-with/9781492097068/&#34;&gt;book&lt;/a&gt; is a great place to start.&lt;/p&gt;
+&lt;p&gt;If you want to learn more about Functional Programing with C#, Simon J. Painter&amp;rsquo;s &lt;a href=&#34;https://www.oreilly.com/library/view/functional-programming-with/9781492097068/&#34;&gt;book&lt;/a&gt; is a great place to start. His C# Advent Calendar 2023 entry is available &lt;a href=&#34;https://www.thecodepainter.co.uk/blog/20231216/scanandindexof&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 </content>
     </item>
     
