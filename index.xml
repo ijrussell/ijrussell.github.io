@@ -6,7 +6,49 @@
     <description>Recent content on ijrussell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 18 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ijrussell.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>https://ijrussell.github.io/about/</link>
+      <pubDate>Mon, 18 Dec 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ijrussell.github.io/about/</guid>
+      <description>My name is Ian Russell and I live near Coventry, UK. I&amp;rsquo;m a .NET Distributed Systems Specialist (C# &amp;amp; F#) and an experienced Domain-Driven Design practitioner.
+I&amp;rsquo;ve been writing software for nearly 30 years, mostly in the .NET (Core) space (C# since 2003 and F# since 2010).
+I&amp;rsquo;ve presented sessions at .NET User Groups and community conferences around the UK since 2010, mainly about C#, F#, Functional Programming, writing better code, and Domain-Driven Design.</description>
+      <content>&lt;p&gt;My name is Ian Russell and I live near Coventry, UK. I&amp;rsquo;m a .NET Distributed Systems Specialist (C# &amp;amp; F#) and an experienced Domain-Driven Design practitioner.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve been writing software for nearly 30 years, mostly in the .NET (Core) space (C# since 2003 and F# since 2010).&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve presented sessions at .NET User Groups and community conferences around the UK since 2010, mainly about C#, F#, Functional Programming, writing better code, and Domain-Driven Design.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve written a free 200-page ebook, &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;Essential F#&lt;/a&gt;, designed to help developers quickly get up to speed in functional-first programming in F#. You can download the ebook from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;leanpub.com/essential-fsharp&lt;/a&gt;. The source markdown files can be found at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;github.com/ijrussell/essential-fsharp&lt;/a&gt;. You are most welcome to make suggestions or contributions to improve the content, either by raising an issue or by creating a pull request in the book&amp;rsquo;s GitHub repository.&lt;/p&gt;
+&lt;p&gt;Many of my previous F# blog posts can be found on the &lt;a href=&#34;https://trustbit.tech/blog&#34;&gt;Trustbit blog&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m a qualified Teacher of Mathematics who decided in my final year of training that I preferred computers to children.&lt;/p&gt;
+&lt;p&gt;You can follow me on &lt;a href=&#34;https://twitter.com/ijrussell&#34;&gt;X/Twitter&lt;/a&gt;, where I talk mainly about programming and being a good human or on &lt;a href=&#34;https://www.linkedin.com/in/ian-russell-7b5301ba/&#34;&gt;LinkedIn&lt;/a&gt; where I encourage folks to discover F# and Functional Programming.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m currently learning how to make use of Data Analysis and Machine Learning.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Free F# Training in 2024</title>
+      <link>https://ijrussell.github.io/posts/free-fsharp-training-in-2024/</link>
+      <pubDate>Mon, 18 Dec 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ijrussell.github.io/posts/free-fsharp-training-in-2024/</guid>
+      <description>Some exciting news. I&amp;rsquo;m teaming up with the Amplifying F# crew to bring free 2-hour weekly sessions for folks wanting to learn F#, starting early in 2024. Further details will be added in the coming days/weeks on the Amplifying F# website.
+Watch the announcement message from Roland Schlenker on YouTube.
+Prerequisites There will be an assumption that you have very little or no experience in F# but do know what .</description>
+      <content>&lt;p&gt;Some exciting news. I&amp;rsquo;m teaming up with the Amplifying F# crew to bring free 2-hour weekly sessions for folks wanting to learn F#, starting early in 2024. Further details will be added in the coming days/weeks on the Amplifying F# &lt;a href=&#34;https://amplifying-fsharp.github.io/&#34;&gt;website&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Watch the announcement message from Roland Schlenker on &lt;a href=&#34;https://t.co/9Ys6qfoTux&#34;&gt;YouTube&lt;/a&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h4&gt;
+&lt;p&gt;There will be an assumption that you have very little or no experience in F# but do know what .NET is.&lt;/p&gt;
+&lt;p&gt;I will be using the following tools for all of my examples. It will be easier to follow along if you use the same.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio Code&lt;/li&gt;
+&lt;li&gt;Ionide for F# VS Code Extension&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://dotnet.microsoft.com/en-us/download/dotnet/8.0&#34;&gt;.NET 8.0 SDK&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    </item>
+    
     <item>
       <title>Discriminated Unions in C#</title>
       <link>https://ijrussell.github.io/posts/csharp-discriminated-union/</link>
@@ -79,7 +121,7 @@ Handling Nulls and Missing Values Handling Business Errors Domain Modelling Ther
 &lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=gpOQl2q0PTU&#34;&gt;Zoran Horvat - Build Your Own Option Type in C# and Use It Like a Pro&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=YbuSuSpzee4&#34;&gt;Nick Chapsas - What&amp;rsquo;s the Result Type Everyone Is Using in .NET?&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Now that we have an understanding of what a Discriminated Unions is, let&amp;rsquo;s introduce a scenario to implement that could benefit from using them in C#.&lt;/p&gt;
+&lt;p&gt;Now that we have an understanding of what a Discriminated Union is, let&amp;rsquo;s introduce a business scenario that could benefit from using them in C#.&lt;/p&gt;
 &lt;h3 id=&#34;the-scenario&#34;&gt;The Scenario&lt;/h3&gt;
 &lt;p&gt;We will look at how to model applying a discount to an order for some customers. This is the feature:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-plaintext&#34; data-lang=&#34;plaintext&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Feature: Applying a discount
@@ -177,7 +219,7 @@ Handling Nulls and Missing Values Handling Business Errors Domain Modelling Ther
 &lt;p&gt;We use Type Test and Set in the Pattern Match to help determine the discount to apply to the order for the specific customer passed into the CalculateTotal function. I know that some folks won&amp;rsquo;t like this as it breaks OOP and SOLID but this is what Type Test and Set was added for.&lt;/p&gt;
 &lt;p&gt;This set of records is our first simulated Discriminated Union. It isn&amp;rsquo;t a closed set, so I can add a new derived record anywhere in the codebase if I wanted to. Notice also that the switch expression requires a wildcard as the compiler has no concept of what a closed set is.&lt;/p&gt;
 &lt;h4 id=&#34;example-3---preventing-rogue-derived-classes&#34;&gt;Example 3 - Preventing Rogue Derived Classes&lt;/h4&gt;
-&lt;p&gt;In this iteration, we will try to prevent folks adding new derived records without us being aware.&lt;/p&gt;
+&lt;p&gt;In this iteration, we will try to prevent folks adding new derived record types elsewhere in the codebase.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; Main()
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;{
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Customer john = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Customer.Registered(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;John&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;);
@@ -947,26 +989,6 @@ This will be the first post of many on .Net Interop. Anything that increases the
 &lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
 &lt;p&gt;Using F# for your tests in .Net is a great way to improve the readability of your tests. You don&amp;rsquo;t need to know much about F# to use it for some or all of your tests.&lt;/p&gt;
 &lt;p&gt;In future posts, I&amp;rsquo;ll endeavour to show much more interop, so that you can make an informed choice about which tools to use for each job.&lt;/p&gt;
-</content>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://ijrussell.github.io/about/</link>
-      <pubDate>Sat, 19 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://ijrussell.github.io/about/</guid>
-      <description>My name is Ian Russell and I live near Coventry, UK. I&amp;rsquo;m a .NET Distributed Systems Specialist (C# &amp;amp; F#) and an experienced Domain-Driven Design practitioner.
-I&amp;rsquo;ve been writing software for nearly 30 years, mostly in the .NET (Core) space (C# since 2003 and F# since 2010).
-I&amp;rsquo;ve presented sessions at .NET User Groups and community conferences around the UK since 2010, mainly about F#, Functional Programming, writing better code, and Domain-Driven Design.</description>
-      <content>&lt;p&gt;My name is Ian Russell and I live near Coventry, UK. I&amp;rsquo;m a .NET Distributed Systems Specialist (C# &amp;amp; F#) and an experienced Domain-Driven Design practitioner.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;ve been writing software for nearly 30 years, mostly in the .NET (Core) space (C# since 2003 and F# since 2010).&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;ve presented sessions at .NET User Groups and community conferences around the UK since 2010, mainly about F#, Functional Programming, writing better code, and Domain-Driven Design.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;ve written a free 200-page ebook, &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;Essential F#&lt;/a&gt;, designed to help developers quickly get up to speed in functional-first programming in F#. You can download the ebook from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;leanpub.com/essential-fsharp&lt;/a&gt;. The source markdown files can be found at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;github.com/ijrussell/essential-fsharp&lt;/a&gt;. You are most welcome to make suggestions or contributions to improve the content, either by raising an issue or by creating a pull request in the book&amp;rsquo;s GitHub repository.&lt;/p&gt;
-&lt;p&gt;Many of my previous F# blog posts can be found on the &lt;a href=&#34;https://trustbit.tech/blog&#34;&gt;Trustbit blog&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;m a qualified Teacher of Mathematics who decided in my final year of training that I preferred computers to children.&lt;/p&gt;
-&lt;p&gt;You can follow me on &lt;a href=&#34;https://twitter.com/ijrussell&#34;&gt;Twitter&lt;/a&gt;, where I talk mainly about programming and being a good human or on &lt;a href=&#34;https://www.linkedin.com/in/ian-russell-7b5301ba/&#34;&gt;LinkedIn&lt;/a&gt; where I encourage folks to discover F# and Functional Programming.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;m currently learning how to improve my communication skills.&lt;/p&gt;
 </content>
     </item>
     
@@ -1965,11 +1987,11 @@ This category of exercise lends itself to using recursion. If you want to see al
       <pubDate>Sat, 30 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://ijrussell.github.io/book/</guid>
-      <description>Essential F# is a 200-page practical ebook aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#. It will help you to discover why F# is such a popular language with those who have spent time learning its secrets. You do not need to know any experience in Mathemetics, Category Theory, or Functional Programming to read this book.
-Essential F# is targeted at folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming.</description>
-      <content>&lt;p&gt;Essential F# is a 200-page practical ebook aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#.  It will help you to discover why F# is such a popular language with those who have spent time learning its secrets. You do not need to know any experience in Mathemetics, Category Theory, or Functional Programming to read this book.&lt;/p&gt;
-&lt;p&gt;Essential F# is targeted at folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming. Some programming experience, particularly in C# or VB.NET, may be useful but not absolutely necessary.&lt;/p&gt;
-&lt;p&gt;You can download Essential F# for free from &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt; as a .pdf, .epub, or .mobi.&lt;/p&gt;
+      <description>Essential F# is a FREE 200-page practical ebook aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#. It will help you to discover why F# is such a popular language with those who have spent time learning its secrets. You do not need to know any experience in Mathemetics, Category Theory, or Functional Programming to read this book.
+Essential F# is targeted at .</description>
+      <content>&lt;p&gt;Essential F# is a FREE 200-page practical ebook aimed at efficiently getting you up to speed with the essentials of functional-first programming in F#.  It will help you to discover why F# is such a popular language with those who have spent time learning its secrets. You do not need to know any experience in Mathemetics, Category Theory, or Functional Programming to read this book.&lt;/p&gt;
+&lt;p&gt;Essential F# is targeted at .NET folks wanting to learn F# and assumes that the reader has no real knowledge of F# or functional programming. Some programming experience, particularly in C# or VB.NET, may be useful but not absolutely necessary.&lt;/p&gt;
+&lt;p&gt;You can download Essential F# for free &lt;a href=&#34;https://leanpub.com/essential-fsharp&#34;&gt;https://leanpub.com/essential-fsharp&lt;/a&gt; as a .pdf, .epub, or .mobi.&lt;/p&gt;
 &lt;p&gt;The source markdown files are available at &lt;a href=&#34;https://github.com/ijrussell/essential-fsharp&#34;&gt;https://github.com/ijrussell/essential-fsharp&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This book is FREE to download but if someone feels that they want to pay money for it, the author&amp;rsquo;s royalties (80% on LeanPub) will continue to go to the F# Software Foundation.&lt;/p&gt;
 </content>

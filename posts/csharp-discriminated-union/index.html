@@ -219,7 +219,7 @@
 <li><a href="https://www.youtube.com/watch?v=gpOQl2q0PTU">Zoran Horvat - Build Your Own Option Type in C# and Use It Like a Pro</a></li>
 <li><a href="https://www.youtube.com/watch?v=YbuSuSpzee4">Nick Chapsas - What&rsquo;s the Result Type Everyone Is Using in .NET?</a></li>
 </ul>
-<p>Now that we have an understanding of what a Discriminated Unions is, let&rsquo;s introduce a scenario to implement that could benefit from using them in C#.</p>
+<p>Now that we have an understanding of what a Discriminated Union is, let&rsquo;s introduce a business scenario that could benefit from using them in C#.</p>
 <h3 id="the-scenario">The Scenario<a href="#the-scenario" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>We will look at how to model applying a discount to an order for some customers. This is the feature:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>Feature: Applying a discount
@@ -317,7 +317,7 @@
 <p>We use Type Test and Set in the Pattern Match to help determine the discount to apply to the order for the specific customer passed into the CalculateTotal function. I know that some folks won&rsquo;t like this as it breaks OOP and SOLID but this is what Type Test and Set was added for.</p>
 <p>This set of records is our first simulated Discriminated Union. It isn&rsquo;t a closed set, so I can add a new derived record anywhere in the codebase if I wanted to. Notice also that the switch expression requires a wildcard as the compiler has no concept of what a closed set is.</p>
 <h4 id="example-3---preventing-rogue-derived-classes">Example 3 - Preventing Rogue Derived Classes<a href="#example-3---preventing-rogue-derived-classes" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>In this iteration, we will try to prevent folks adding new derived records without us being aware.</p>
+<p>In this iteration, we will try to prevent folks adding new derived record types elsewhere in the codebase.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Main()
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    Customer john = <span style="color:#66d9ef">new</span> Customer.Registered(<span style="color:#e6db74">&#34;John&#34;</span>, <span style="color:#66d9ef">true</span>);
@@ -441,6 +441,13 @@
         <hr />
     </div>
     <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://ijrussell.github.io/posts/free-fsharp-training-in-2024/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Free F# Training in 2024</span>
+            </a>
+        </span>
         
         
         <span class="button next">
